@@ -1,0 +1,14 @@
+language: python
+python:
+  - "2.7"
+  - "3.3"
+  - "3.4"
+  - "3.5"
+  - "nightly"
+script:
+  - cd tests; py.test --cov dnapy
+install:
+  - pip install codecov pytest pytest-cov coverage pysam
+  - python setup.py install
+after_success:
+  - codecov
