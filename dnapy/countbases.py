@@ -2,17 +2,24 @@ import argparse
 import pysam
 import collections
 import os
+import sys
 
 
-MAX_DEPTH=1e10
+MAX_DEPTH=1e9
 
-def check_file(targetFile):
-    if not os.path.isfile(targetFile):
-        raise argparse.ArgumentTypeError(targetFile+' is not a file')
-    if os.access(targetFile, os.R_OK):
-        return targetFile
-    else:
-        raise argparse.ArgumentTypeError(targetFile+' is not readable')
+def countBasesInFile(inputFile,region=None):
+    samfile = pysam.AlignmentFile(inputFile, "rb" )
+    print(samfile.pileup(region=region))
+    for pileupcolumn in samfile.pileup(region=region,max_depth=MAX_DEPTH):
+        #print ("coverage at base %s = %s" % (pileupcolumn.pos, pileupcolumn.n))
+        counts=collections.defaultdict(lambda:0)
+        for pileupread in pileupcolumn.pileups:
+            if not pileupread.is_del and not pileupread.is_refskip:
+                thisBase=pileupread.alignment.query_sequence[pileupread.query_position]
+                counts[thisBase]+=1
+        yield {"ref": pileupcolumn.reference_name, "pos": pileupcolumn.pos, "n": pileupcolumn.n, "A": counts['A'], "C": counts['C'], "G": counts['G'], "T":counts['T']}
+    samfile.close()
+
 
 
 def main(argv=None):
@@ -26,21 +33,14 @@ def main(argv=None):
     args=parser.parse_args(argv)
         
     if args.verbose:
-        print("Arguments: ")
+        sys.stderr.write("Arguments: ")
         for key, value in vars(args).items():
-            print("   "+key+": "+str(value))
+            sys.stderr.write("   "+key+": "+str(value))
 
-    samfile = pysam.AlignmentFile(args/bamFile, "rb" )
-    for pileupcolumn in samfile.pileup("H3N2_HA_Colorado_edited",max_depth=MAX_DEPTH,region=region):
-        #print ("coverage at base %s = %s" % (pileupcolumn.pos, pileupcolumn.n))
-        counts=defaultdict(lambda:0)
-        for pileupread in pileupcolumn.pileups:
-            if not pileupread.is_del and not pileupread.is_refskip:
-                thisBase=pileupread.alignment.query_sequence[pileupread.query_position]
-                counts[thisBase]+=1
-        print ("%d,%d,%d,%d,%d,%d" % (pileupcolumn.pos, pileupcolumn.n, counts['A'], counts['C'], counts['G'], counts['T']))
-    samfile.close()
+        for column in countBasesInFile(args.bamFile,args.region):
+            print ("%s,%d,%d,%d,%d,%d,%d" % (column["ref"],column['pos'],column['n'],column["A"],column['C'],column['G'],column["A"]))
+            
 
-
+    
 if __name__ == '__main__':
     main(sys.argv[1:])
