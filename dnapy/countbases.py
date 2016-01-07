@@ -1,6 +1,7 @@
 import argparse
 import pysam
 import collections
+import os
 
 
 MAX_DEPTH=1e10

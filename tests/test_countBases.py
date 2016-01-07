@@ -1,7 +1,8 @@
 import pytest
+import os
+import stat
 from dnapy import countbases
 import argparse
-import os, stat
 
 def test_checkFile(tmpdir):
     d = tmpdir.mkdir('dir')
