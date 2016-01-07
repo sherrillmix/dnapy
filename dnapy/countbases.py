@@ -1,6 +1,9 @@
+import argparse
 import pysam
-from collections import defaultdict
+import collections
 
+
+MAX_DEPTH=1e10
 
 def check_file(targetFile):
     if not os.path.isfile(targetFile):
@@ -26,14 +29,17 @@ def main(argv=None):
         for key, value in vars(args).items():
             print("   "+key+": "+str(value))
 
-samfile = pysam.AlignmentFile("S9R1_S13vH3N2_HA_Colorado_edited.bam", "rb" )
-for pileupcolumn in samfile.pileup("H3N2_HA_Colorado_edited",max_depth=1e9):
-    #print ("coverage at base %s = %s" % (pileupcolumn.pos, pileupcolumn.n))
-    counts=defaultdict(lambda:0)
-    for pileupread in pileupcolumn.pileups:
-        if not pileupread.is_del and not pileupread.is_refskip:
-            thisBase=pileupread.alignment.query_sequence[pileupread.query_position]
-            counts[thisBase]+=1
-    print ("%d,%d,%d,%d,%d,%d" % (pileupcolumn.pos, pileupcolumn.n, counts['A'], counts['C'], counts['G'], counts['T']))
+    samfile = pysam.AlignmentFile(args/bamFile, "rb" )
+    for pileupcolumn in samfile.pileup("H3N2_HA_Colorado_edited",max_depth=MAX_DEPTH,region=region):
+        #print ("coverage at base %s = %s" % (pileupcolumn.pos, pileupcolumn.n))
+        counts=defaultdict(lambda:0)
+        for pileupread in pileupcolumn.pileups:
+            if not pileupread.is_del and not pileupread.is_refskip:
+                thisBase=pileupread.alignment.query_sequence[pileupread.query_position]
+                counts[thisBase]+=1
+        print ("%d,%d,%d,%d,%d,%d" % (pileupcolumn.pos, pileupcolumn.n, counts['A'], counts['C'], counts['G'], counts['T']))
+    samfile.close()
 
-samfile.close()
+
+if __name__ == '__main__':
+    main(sys.argv[1:])
