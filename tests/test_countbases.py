@@ -62,14 +62,8 @@ def test_goodFiles(tmpdir):
     a.cigar = ((0,10), )
     a.query_qualities = "(((((((((("
     outFile.write(a)
-    a = pysam.AlignedSegment()
     a.query_name = "read2"
     a.query_sequence="AAAAATTTTT"
-    a.reference_id = 0
-    a.reference_start = 32
-    a.mapping_quality = 20
-    a.cigar = ((0,10), )
-    a.query_qualities = "(((((((((("
     outFile.write(a)
     outFile.close()
     pysam.index(str(p))
