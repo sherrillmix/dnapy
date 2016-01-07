@@ -17,6 +17,8 @@ def countBasesInFile(inputFile,region=None):
             for pileupread in pileupcolumn.pileups:
                 if not pileupread.is_del and not pileupread.is_refskip:
                     thisBase=pileupread.alignment.query_sequence[pileupread.query_position]
+                    thisStrand='-' if pileupread.is_reverse else '+'
+                    #counts[thisBase+thisStrand]+=1
                     counts[thisBase]+=1
             yield {"ref": pileupcolumn.reference_name, "pos": pileupcolumn.pos, "n": pileupcolumn.n, "A": counts['A'], "C": counts['C'], "G": counts['G'], "T":counts['T']}
 
