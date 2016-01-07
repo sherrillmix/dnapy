@@ -21,6 +21,26 @@ def test_badFiles(tmpdir):
     with pytest.raises(ValueError):
         next(countbases.countBasesInFile(str(p)))
 
+@pytest.fixture(scope='session')
+def bamFile(tmpdir_factory):
+    header = { 'HD': {'VN': '1.0'}, 'SQ': [{'LN': 1000, 'SN': 'ref'}] }
+    p=tmpdir_factory.mktemp('test').join('test.bam')
+    outFile=pysam.AlignmentFile(str(p),"wb",header=header)
+    a = pysam.AlignedSegment()
+    a.query_name = "read1"
+    a.query_sequence="AAAAACCCCC"
+    a.reference_id = 0
+    a.reference_start = 32
+    a.mapping_quality = 20
+    a.cigar = ((0,10), )
+    a.query_qualities = "(((((((((("
+    outFile.write(a)
+    a.query_name = "read2"
+    a.query_sequence="AAAAATTTTT"
+    outFile.write(a)
+    outFile.close()
+    pysam.index(str(p))
+    return p
 
 
 def test_goodFiles(tmpdir):
@@ -82,4 +102,29 @@ def test_goodFiles(tmpdir):
         assert col['pos']==count+32
         count+=1
 
+
+def test_main(capsys,tmpdir,bamFile):
+    with pytest.raises(SystemExit):
+        countbases.main()
+    out, err=capsys.readouterr()
+    assert 'usage' in err
+    with pytest.raises(SystemExit):
+        countbases.main(['-h'])
+    out, err=capsys.readouterr()
+    assert 'usage' in out
+
+
+    countbases.main(['-v','-b',str(bamFile)])
+    out, err=capsys.readouterr()
+    assert 'Arguments' in err
+    compare=countbases.countBasesInFile(str(bamFile))
+    for ii,jj in zip(out.split('\n'),compare):
+        ii=ii.split(',')
+        assert ii[0]==jj['ref']
+        assert int(ii[1])==jj['pos']
+        assert int(ii[2])==jj['n']
+        assert int(ii[3])==jj['A']
+        assert int(ii[4])==jj['C']
+        assert int(ii[5])==jj['G']
+        assert int(ii[6])==jj['T']
 
