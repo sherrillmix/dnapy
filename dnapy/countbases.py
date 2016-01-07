@@ -3,7 +3,7 @@ import pysam
 import collections
 import os
 import sys
-import helper
+from dnapy import helper
 
 
 MAX_DEPTH=1e9
