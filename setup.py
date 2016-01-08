@@ -21,7 +21,7 @@ class PyTest(TestCommand):
         errno = pytest.main(self.pytest_args)
         sys.exit(errno)
 
-setup(name='ampcountpy',
+setup(name='dnapy',
     version='0.1',
     description='Some handy functions for dealing with sequence alignment files.',
     url='http://github.com/sherrillmix/dnapy',
@@ -33,7 +33,7 @@ setup(name='ampcountpy',
     install_requires=['pysam >= 0.8.4'],
     tests_require=['pytest >=2.8'],
     cmdclass = {'test': PyTest},
-    entry_points={ 'console_scripts': [ 'countbases = dnapy.countBases:main' ] },
+    entry_points={ 'console_scripts': [ 'countbases = dnapy.countbases:main' ] },
     classifiers=[
         "Topic :: Scientific/Engineering :: Bio-Informatics",
         'Intended Audience :: Science/Research',
