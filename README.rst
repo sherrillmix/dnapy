@@ -1,6 +1,13 @@
 dnapy
 ==========
 
+.. image:: https://travis-ci.org/sherrillmix/dnapy.svg?branch=master
+    :alt: Travis CI
+    :target: https://travis-ci.org/sherrillmix/dnapy
+.. image:: https://codecov.io/github/sherrillmix/dnapy.svg?branch=master
+    :alt: Codecov
+    :target: https://codecov.io/github/sherrillmix/dnapy?branch=master
+
 
 Some python functions to deal with DNA alignments.
  
