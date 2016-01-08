@@ -7,6 +7,9 @@ python:
   - "nightly"
 script:
   - cd tests; py.test --cov dnapy
+before_install:
+   - pip install pysam==0.8.4
+   - pip freeze
 install:
   - pip install codecov pytest pytest-cov coverage pysam
   - python setup.py install
