@@ -154,9 +154,6 @@ def test_main(capsys,tmpdir,bamFile):
 def test_commandline(capsys,bamFile):
     countbases.main(['-s',str(bamFile)])
     out, err=capsys.readouterr()
-    print "__"+out+"__"
     out2 = subprocess.check_output("countbases -s "+str(bamFile), shell=True)
-    print bamFile
-    print "__"+out2+"__"
     assert out==out2
 
