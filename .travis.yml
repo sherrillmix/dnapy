@@ -8,7 +8,7 @@ python:
 script:
   - cd tests; py.test --cov dnapy
 install:
-  - pip uninstall pytest
+  - pip uninstall -y pytest
   - pip install -Iv codecov pytest>=2.8 pytest-cov coverage pysam>=0.8.4
   - pip freeze
   - python setup.py install
