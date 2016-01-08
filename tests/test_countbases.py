@@ -28,23 +28,30 @@ def bamFile(tmpdir_factory):
     p=tmpdir_factory.mktemp('test').join('test.bam')
     outFile=pysam.AlignmentFile(str(p),"wb",header=header)
     a = pysam.AlignedSegment()
-    a.query_name = "read1"
-    a.query_sequence="AAAAACCCCC"
+    a.query_name = "read3"
+    a.query_sequence="GGGGAAAAAT"
+    a.reference_start = 28
     a.reference_id = 0
-    a.reference_start = 32
     a.mapping_quality = 20
     a.cigar = ((0,10), )
-    #a.query_qualities =pysam.qualitystring_to_array("((((((((((")
+    #a.query_qualities = pysam.qualitystring_to_array("((((((((((")
+    a.flag=16
     outFile.write(a)
     a.query_name = "read2"
+    a.reference_start = 32
     a.query_sequence="AAAAATTTTT"
+    a.flag=0
+    outFile.write(a)
+    a.query_name = "read1"
+    a.query_sequence="AAAAACCCCCGGC"
+    #a.query_qualities = pysam.qualitystring_to_array("(((((((((((((")
+    a.cigar = ((0,10), (2,2),(0,1),(1,1),(0,1))
     outFile.write(a)
     outFile.close()
     pysam.index(str(p))
-    return p
+    return(p)
 
-
-def test_goodFiles(tmpdir):
+def test_goodFiles(tmpdir,bamFile):
     d = tmpdir.mkdir('dir')
     p = d.join('test.bam')
     header = { 'HD': {'VN': '1.0'}, 'SQ': [{'LN': 1000, 'SN': 'ref'}] }
@@ -73,30 +80,6 @@ def test_goodFiles(tmpdir):
         assert col['pos']==count+32
         count+=1
 
-    outFile=pysam.AlignmentFile(str(p),"wb",header=header)
-    a = pysam.AlignedSegment()
-    a.query_name = "read3"
-    a.query_sequence="GGGGAAAAAT"
-    a.reference_start = 28
-    a.reference_id = 0
-    a.mapping_quality = 20
-    a.cigar = ((0,10), )
-    #a.query_qualities = pysam.qualitystring_to_array("((((((((((")
-    a.flag=16
-    outFile.write(a)
-    a.query_name = "read2"
-    a.reference_start = 32
-    a.query_sequence="AAAAATTTTT"
-    a.flag=0
-    outFile.write(a)
-    a.query_name = "read1"
-    a.query_sequence="AAAAACCCCCGGC"
-    #a.query_qualities = pysam.qualitystring_to_array("(((((((((((((")
-    a.cigar = ((0,10), (2,2),(0,1),(1,1),(0,1))
-    outFile.write(a)
-    outFile.close()
-    pysam.index(str(p))
-
     bases=['A','C','G','T']
     strands=['+','-']
     predictedStrandCounts={'+':{
@@ -115,7 +98,7 @@ def test_goodFiles(tmpdir):
     pos=range(28,46)
 
     ii=0
-    for col in countbases.countBasesInFile(str(p)):
+    for col in countbases.countBasesInFile(str(bamFile)):
         for base in bases:
             for strand in strands: 
                 #print str(pos[count])+base + strand
@@ -135,11 +118,11 @@ def test_main(capsys,tmpdir,bamFile):
     out, err=capsys.readouterr()
     assert 'usage' in out
 
-
     countbases.main(['-v',str(bamFile)])
     out, err=capsys.readouterr()
     assert 'Arguments' in err
     compare=countbases.countBasesInFile(str(bamFile))
+
     for ii,jj in zip(out.split('\n')[1:],compare): 
         ii=ii.split(',')
         assert ii[0]==jj['ref']
@@ -149,4 +132,21 @@ def test_main(capsys,tmpdir,bamFile):
         assert int(ii[4])==jj['+']['C']+jj['-']['C']
         assert int(ii[5])==jj['+']['G']+jj['-']['G']
         assert int(ii[6])==jj['+']['T']+jj['-']['T']
+
+    countbases.main(['-s',str(bamFile)])
+    out, err=capsys.readouterr()
+
+    for ii,jj in zip(out.split('\n')[1:],compare): 
+        ii=ii.split(',')
+        assert ii[0]==jj['ref']
+        assert int(ii[1])==jj['pos']
+        assert int(ii[2])==jj['n']
+        assert int(ii[3])==jj['+']['A']
+        assert int(ii[5])==jj['+']['C']
+        assert int(ii[7])==jj['+']['G']
+        assert int(ii[9])==jj['+']['T']
+        assert int(ii[4])==jj['-']['A']
+        assert int(ii[6])==jj['-']['C']
+        assert int(ii[8])==jj['-']['G']
+        assert int(ii[10])==jj['-']['T']
 
