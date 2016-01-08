@@ -75,34 +75,54 @@ def test_goodFiles(tmpdir):
 
     outFile=pysam.AlignmentFile(str(p),"wb",header=header)
     a = pysam.AlignedSegment()
-    a.query_name = "read1"
-    a.query_sequence="AAAAACCCCC"
+    a.query_name = "read3"
+    a.query_sequence="GGGGAAAAAT"
+    a.reference_start = 28
     a.reference_id = 0
-    a.reference_start = 32
     a.mapping_quality = 20
     a.cigar = ((0,10), )
     a.query_qualities = "(((((((((("
+    a.flag=16
     outFile.write(a)
     a.query_name = "read2"
+    a.reference_start = 32
     a.query_sequence="AAAAATTTTT"
+    a.flag=0
+    outFile.write(a)
+    a.query_name = "read1"
+    a.query_sequence="AAAAACCCCCGGC"
+    a.cigar = ((0,10), (2,2),(0,1),(1,1),(0,1))
     outFile.write(a)
     outFile.close()
     pysam.index(str(p))
-    count=0
+
+    bases=['A','C','G','T']
+    strands=['+','-']
+    predictedStrandCounts={'+':{
+        'A':[0,0,0,0,2,2,2,2,2,0,0,0,0,0,0,0,0,0],
+        'C':[0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,1],
+        'G':[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0],
+        'T':[0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0],
+    },'-':{
+        'A':[0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0],
+        'C':[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        'G':[1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        'T':[0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0]
+    }}
+    n=      [1,1,1,1,3,3,3,3,3,3,2,2,2,2,1,1,1,1]
+    #predictedCounts=[predictedStrandCounts['+'][base]+predictedStrandCounts['-'][base] for base in bases]
+    pos=range(28,46)
+
+    ii=0
     for col in countbases.countBasesInFile(str(p)):
-        if count<5:
-            assert col['+']['A']==2
-            assert col['+']['G']+col['+']['T']+col['+']['C']==0
-            assert col['-']['A']-col['-']['C']-col['-']['G']-col['-']['T']==0
-            assert col['n']==2
-        else:
-            assert col['+']['T']==1
-            assert col['+']['C']==1
-            assert col['+']['G']+col['+']['A']==0
-            assert col['-']['A']-col['-']['C']-col['-']['G']-col['-']['T']==0
-            assert col['n']==2
-        assert col['pos']==count+32
-        count+=1
+        print col
+        for base in bases:
+            for strand in strands: 
+                #print str(pos[count])+base + strand
+                assert col[strand][base]==predictedStrandCounts[strand][base][ii]
+        assert col['pos']==pos[ii]
+        assert col['n']==n[ii]
+        ii+=1
 
 
 def test_main(capsys,tmpdir,bamFile):
