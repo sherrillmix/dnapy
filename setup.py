@@ -31,7 +31,7 @@ setup(name='ampcountpy',
     packages=find_packages(),
     zip_safe=True,
     install_requires=['pysam'],
-    tests_require=['pytest'],
+    tests_require=['pytest >=2.8'],
     cmdclass = {'test': PyTest},
     entry_points={ 'console_scripts': [ 'countbases = dnapy.countBases:main' ] },
     classifiers=[

@@ -122,8 +122,6 @@ def test_main(capsys,tmpdir,bamFile):
     compare=countbases.countBasesInFile(str(bamFile))
     for ii,jj in zip(out.split('\n'),compare):
         ii=ii.split(',')
-        print ii
-        print jj
         assert ii[0]==jj['ref']
         assert int(ii[1])==jj['pos']
         assert int(ii[2])==jj['n']
