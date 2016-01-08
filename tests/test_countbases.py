@@ -115,7 +115,6 @@ def test_goodFiles(tmpdir):
 
     ii=0
     for col in countbases.countBasesInFile(str(p)):
-        print col
         for base in bases:
             for strand in strands: 
                 #print str(pos[count])+base + strand
