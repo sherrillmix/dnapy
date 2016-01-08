@@ -34,7 +34,7 @@ def bamFile(tmpdir_factory):
     a.reference_start = 32
     a.mapping_quality = 20
     a.cigar = ((0,10), )
-    a.query_qualities =pysam.qualitystring_to_array("((((((((((")
+    #a.query_qualities =pysam.qualitystring_to_array("((((((((((")
     outFile.write(a)
     a.query_name = "read2"
     a.query_sequence="AAAAATTTTT"
@@ -56,7 +56,7 @@ def test_goodFiles(tmpdir):
     a.reference_start = 32
     a.mapping_quality = 20
     a.cigar = ((0,10), )
-    a.query_qualities = pysam.qualitystring_to_array("((((((((((")
+    #a.query_qualities = pysam.qualitystring_to_array("((((((((((")
     outFile.write(a)
     outFile.close()
     pysam.index(str(p))
@@ -81,7 +81,7 @@ def test_goodFiles(tmpdir):
     a.reference_id = 0
     a.mapping_quality = 20
     a.cigar = ((0,10), )
-    a.query_qualities = pysam.qualitystring_to_array("((((((((((")
+    #a.query_qualities = pysam.qualitystring_to_array("((((((((((")
     a.flag=16
     outFile.write(a)
     a.query_name = "read2"
@@ -91,7 +91,7 @@ def test_goodFiles(tmpdir):
     outFile.write(a)
     a.query_name = "read1"
     a.query_sequence="AAAAACCCCCGGC"
-    a.query_qualities = pysam.qualitystring_to_array("(((((((((((((")
+    #a.query_qualities = pysam.qualitystring_to_array("(((((((((((((")
     a.cigar = ((0,10), (2,2),(0,1),(1,1),(0,1))
     outFile.write(a)
     outFile.close()
