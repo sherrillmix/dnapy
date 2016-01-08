@@ -47,6 +47,7 @@ def main(argv=None):
         header+=",".join([base+strand for base in bases for strand in strands])
     else:
         header+=','.join(bases)
+    print(header)
     for column in countBasesInFile(args.bamFile,args.region):
         if args.strand:
             counts=[column[strand][base] for base in bases for strand in strands]

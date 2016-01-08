@@ -140,7 +140,7 @@ def test_main(capsys,tmpdir,bamFile):
     out, err=capsys.readouterr()
     assert 'Arguments' in err
     compare=countbases.countBasesInFile(str(bamFile))
-    for ii,jj in zip(out.split('\n'),compare):
+    for ii,jj in zip(out.split('\n')[1:],compare): 
         ii=ii.split(',')
         assert ii[0]==jj['ref']
         assert int(ii[1])==jj['pos']
