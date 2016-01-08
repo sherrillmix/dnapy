@@ -3,6 +3,7 @@ from dnapy import countbases
 import os
 import stat
 import pysam
+import subprocess
 
 def test_badFiles(tmpdir):
     d = tmpdir.mkdir('dir')
@@ -149,4 +150,13 @@ def test_main(capsys,tmpdir,bamFile):
         assert int(ii[6])==jj['-']['C']
         assert int(ii[8])==jj['-']['G']
         assert int(ii[10])==jj['-']['T']
+
+def test_commandline(capsys,bamFile):
+    countbases.main(['-s',str(bamFile)])
+    out, err=capsys.readouterr()
+    print "__"+out+"__"
+    out2 = subprocess.check_output("countbases -s "+str(bamFile), shell=True)
+    print bamFile
+    print "__"+out2+"__"
+    assert out==out2
 
