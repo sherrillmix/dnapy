@@ -155,7 +155,7 @@ def test_commandline(capsys,bamFile):
     countbases.main(['-s',str(bamFile)])
     out, err=capsys.readouterr()
     out2 = subprocess.check_output("countbases -s "+str(bamFile), shell=True)
-    for ii,jj in zip(str(out).split('\n'),str(out2).split('\n')): 
+    for ii,jj in zip(out.split('\n'),out2.decode().split('\n')): 
         print(ii)
         print(jj)
         assert ii==jj
