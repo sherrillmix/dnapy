@@ -30,10 +30,13 @@ setup(name='dnapy',
     license='GPL 3',
     packages=find_packages(),
     zip_safe=True,
-    install_requires=['pysam >= 0.8.4'],
+    install_requires=['pysam >= 0.8.4','biopython'],
     tests_require=['pytest >=2.8'],
     cmdclass = {'test': PyTest},
-    entry_points={ 'console_scripts': [ 'countbases = dnapy.countbases:main' ] },
+    entry_points={ 'console_scripts': [
+        'countbases = dnapy.countbases:main',
+        'removeshort = dnapy.removeshort:main'
+        ] },
     classifiers=[
         "Topic :: Scientific/Engineering :: Bio-Informatics",
         'Intended Audience :: Science/Research',
