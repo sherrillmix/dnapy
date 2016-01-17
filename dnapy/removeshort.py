@@ -8,12 +8,7 @@ from dnapy import helper
 
 
 
-def closeFiles(openFiles):
-    for openFile in openFiles:
-        openFile.close()
 
-def writeRead(readFile,read):
-    readFile.write("@%s\n%s\n+%s\n%s\n" %(read[0],read[1],read[0],read[2]))
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description="A program to remove short reads from a fastq file.")
@@ -23,25 +18,15 @@ def main(argv=None):
     args=parser.parse_args(argv)
  
 
-    if len(args)!=1:
-        sys.stderr.write('Please provide a single fastq or fastq.gz file\n')
-        return 4
-    try:
-        if args[0][-2:]=='gz' or args[0][-4]=='gzip':
-            fastq=gzip.open(args[0], "r")
-        else:
-            fastq=open(args[0],"r")
-    except IOError:
-        sys.stderr.write("Problem opening file:"+args[0]+"\n")
-        return 3
+    fastq=openNormalOrGz(args.fastqFile)
     openFiles=[fastq]
-    atexit.register(closeFiles,openFiles)
+    atexit.register(helper.closeFiles,openFiles)
     
 
     for currentRead in Bio.SeqIO.QualityIO.FastqGeneralIterator(fastq):
         if len(currentRead[1])>=args.minLength:
             nGood+=1
-            writeRead(sys.stdout,currentRead)
+            helper.writeFastqRead(sys.stdout,currentRead)
         else:
             nBad+=1
         if args.dots>0 and (nGood+nBad) % args.dots == 0:
