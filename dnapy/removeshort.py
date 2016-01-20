@@ -9,6 +9,22 @@ from dnapy import helper
 
 
 
+def removeShort(fastqFile,minLength=10,dots=0):
+    nGood=0
+    nBad=0
+    with helper.openNormalOrGz(fastqFile) as fastq:
+        for currentRead in Bio.SeqIO.QualityIO.FastqGeneralIterator(fastq):
+            if len(currentRead[1])>=minLength:
+                nGood+=1
+                helper.writeFastqRead(sys.stdout,currentRead)
+            else:
+                nBad+=1
+            if dots>0 and (nGood+nBad) % dots == 0:
+                sys.stderr.write('.')
+        if dots>0:
+            sys.stderr.write("\nGood reads: "+str(nGood)+" Bad reads: "+str(nBad)+"\n")
+
+
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description="A program to remove short reads from a fastq file.")
@@ -18,21 +34,8 @@ def main(argv=None):
     args=parser.parse_args(argv)
  
 
-    fastq=openNormalOrGz(args.fastqFile)
-    openFiles=[fastq]
-    atexit.register(helper.closeFiles,openFiles)
-    
+    removeShort(fastq,args.minLength,args.dots)
 
-    for currentRead in Bio.SeqIO.QualityIO.FastqGeneralIterator(fastq):
-        if len(currentRead[1])>=args.minLength:
-            nGood+=1
-            helper.writeFastqRead(sys.stdout,currentRead)
-        else:
-            nBad+=1
-        if args.dots>0 and (nGood+nBad) % args.dots == 0:
-            sys.stderr.write('.')
-    if verbose:
-        sys.stderr.write("\nGood reads: "+str(nGood)+" Bad reads: "+str(nBad)+"\n")
 
 
 if __name__ == '__main__':

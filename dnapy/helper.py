@@ -29,5 +29,5 @@ def openNormalOrGz(gzFile,mode='r'):
             fastq=open(gzFile,mode)
     except IOError:
         sys.stderr.write("Problem opening file:"+gzFile+"\n")
-        return 3
+        raise
     return fastq
