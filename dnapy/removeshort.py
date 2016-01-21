@@ -32,14 +32,15 @@ def main(argv=None):
     nBad=0
     nGood=0
     for currentRead in removeShort(args.fastqFile,args.minLength):
-#args.dots
         helper.writeFastqRead(sys.stdout,currentRead['read'])
+        nOld=nBad+nGood
         nBad+=currentRead['nBad']
         nGood+=1
-
-    if dots>0 and (nGood+nBad) % dots == 0:
-        sys.stderr.write('.')
-    if dots>0:
+        if args.dots>0:
+            nDots=sum([1 for ii in  range(nOld,nGood+nBad+1) if ii%args.dot==0])
+            sys.stderr.write('.'*nDots)
+        
+    if args.dots>0:
         sys.stderr.write("\nGood reads: "+str(nGood)+" Bad reads: "+str(nBad)+"\n")
 
 
