@@ -9,20 +9,15 @@ from dnapy import helper
 
 
 
-def removeShort(fastqFile,minLength=10,dots=0):
-    nGood=0
+def removeShort(fastqFile,minLength=10):
     nBad=0
     with helper.openNormalOrGz(fastqFile) as fastq:
+        print fastq
         for currentRead in Bio.SeqIO.QualityIO.FastqGeneralIterator(fastq):
             if len(currentRead[1])>=minLength:
-                nGood+=1
-                helper.writeFastqRead(sys.stdout,currentRead)
+                yield {"read":currentRead,"nBad":nBad}
             else:
                 nBad+=1
-            if dots>0 and (nGood+nBad) % dots == 0:
-                sys.stderr.write('.')
-        if dots>0:
-            sys.stderr.write("\nGood reads: "+str(nGood)+" Bad reads: "+str(nBad)+"\n")
 
 
 
@@ -34,7 +29,18 @@ def main(argv=None):
     args=parser.parse_args(argv)
  
 
-    removeShort(fastq,args.minLength,args.dots)
+    nBad=0
+    nGood=0
+    for currentRead in removeShort(args.fastqFile,args.minLength):
+#args.dots
+        helper.writeFastqRead(sys.stdout,currentRead['read'])
+        nBad+=currentRead['nBad']
+        nGood+=1
+
+    if dots>0 and (nGood+nBad) % dots == 0:
+        sys.stderr.write('.')
+    if dots>0:
+        sys.stderr.write("\nGood reads: "+str(nGood)+" Bad reads: "+str(nBad)+"\n")
 
 
 

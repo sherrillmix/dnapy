@@ -9,10 +9,10 @@ def test_badFiles(tmpdir):
     d = tmpdir.mkdir('dir')
     p = d.join('test.txt')
     with pytest.raises(IOError):
-        removeshort.removeShort(str(d))
+        next(removeshort.removeShort(str(d)))
     #doesn't exist yet
     with pytest.raises(IOError):
-        removeshort.removeShort(str(p))
+        next(removeshort.removeShort(str(p)))
     #incorrectly formatted file
     #doesn't exist yet
     p.write("test")
@@ -22,5 +22,5 @@ def test_badFiles(tmpdir):
     #make unreadable
     os.chmod(str(p),os.stat(str(p)).st_mode & ~stat.S_IREAD)
     with pytest.raises(IOError):
-        removeshort.removeShort(str(p))
+        next(removeshort.removeShort(str(p)))
 
