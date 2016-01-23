@@ -9,15 +9,50 @@ from dnapy import helper
 
 
 
-def removeShort(fastqFile,minLength=10):
-    nBad=0
-    with helper.openNormalOrGz(fastqFile) as fastq:
-        print fastq
-        for currentRead in Bio.SeqIO.QualityIO.FastqGeneralIterator(fastq):
-            if len(currentRead[1])>=minLength:
-                yield {"read":currentRead,"nBad":nBad}
+
+
+class shortFilterFastqIter:
+    def __init__(self, fastqFile, minLength=10):
+        self.nGood = 0
+        self.nBad = 0
+        self.minLength=minLength
+        self.fastqFile=fastqFile
+        self.fastqHandle=helper.openNormalOrGz(self.fastqFile)
+        self.fastq=Bio.SeqIO.QualityIO.FastqGeneralIterator(self.fastqHandle)
+    
+    def __enter__(self):
+        return self
+
+    def __exit__(self,exc_type,exc_value,traceback):
+        self.fastqHandle.close()
+
+    def __iter__(self):
+        return self
+
+    def next(self):
+        return self.__next__()
+
+    def __next__(self):
+        for currentRead in self.fastq:
+            if len(currentRead[1])>=self.minLength:
+                self.nGood+=1
+                return currentRead
             else:
-                nBad+=1
+                self.nBad+=1
+        raise StopIteration()
+
+
+#def removeShort(fastqFile,minLength=10):
+    #nBad=0
+    #fastqIter=shortFilterFastqIter(fastqFile)
+    #for currentRead in fastqIter:
+        #
+    #with helper.openNormalOrGz(fastqFile) as fastq:
+        #for currentRead in Bio.SeqIO.QualityIO.FastqGeneralIterator(fastq):
+            #if len(currentRead[1])>=minLength:
+                #yield {"read":currentRead,"nBad":nBad}
+            #else:
+                #nBad+=1
 
 
 
@@ -29,19 +64,15 @@ def main(argv=None):
     args=parser.parse_args(argv)
  
 
-    nBad=0
-    nGood=0
-    for currentRead in removeShort(args.fastqFile,args.minLength):
-        helper.writeFastqRead(sys.stdout,currentRead['read'])
-        nOld=nBad+nGood
-        nBad+=currentRead['nBad']
-        nGood+=1
+    with shortFilterFastqIter(args.fastqFile,args.minLength) as fastqIter:
+        for currentRead in fastqIter:
+            helper.writeFastqRead(sys.stdout,currentRead)
+            if args.dots>0:
+                if fastqIter.nGood % args.dots==0:
+                    sys.stderr.write('.')
+
         if args.dots>0:
-            nDots=sum([1 for ii in  range(nOld,nGood+nBad+1) if ii%args.dot==0])
-            sys.stderr.write('.'*nDots)
-        
-    if args.dots>0:
-        sys.stderr.write("\nGood reads: "+str(nGood)+" Bad reads: "+str(nBad)+"\n")
+            sys.stderr.write("\nGood reads: "+str(fastqIter.nGood)+" Bad reads: "+str(fastqIter.nBad)+"\n")
 
 
 
