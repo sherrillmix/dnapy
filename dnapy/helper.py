@@ -15,7 +15,7 @@ def check_file(targetFile):
 
 def writeFastqRead(readFile,read):
     out="@%s\n%s\n+%s\n%s\n" %(read[0],read[1],read[0],read[2])
-    out=out.encode('utf-8')
+    #out=out.encode('utf-8')
     readFile.write(out)
 
 
@@ -24,6 +24,7 @@ def closeFiles(openFiles):
         openFile.close()
 
 def openNormalOrGz(gzFile,mode='r'):
+    if not any([True for ii in mode if ii=='t']):mode+="t"
     try:
         if gzFile[-2:]=='gz' or gzFile[-4]=='gzip':
             fastq=gzip.open(gzFile, mode)
