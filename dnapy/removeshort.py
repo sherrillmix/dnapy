@@ -42,20 +42,6 @@ class shortFilterFastqIter:
         raise StopIteration()
 
 
-#def removeShort(fastqFile,minLength=10):
-    #nBad=0
-    #fastqIter=shortFilterFastqIter(fastqFile)
-    #for currentRead in fastqIter:
-        #
-    #with helper.openNormalOrGz(fastqFile) as fastq:
-        #for currentRead in Bio.SeqIO.QualityIO.FastqGeneralIterator(fastq):
-            #if len(currentRead[1])>=minLength:
-                #yield {"read":currentRead,"nBad":nBad}
-            #else:
-                #nBad+=1
-
-
-
 def main(argv=None):
     parser = argparse.ArgumentParser(description="A program to remove short reads from a fastq file.")
     parser.add_argument('fastqFile', help='a fastq (potentially gzipped) file containing the alignment',type=helper.check_file)
