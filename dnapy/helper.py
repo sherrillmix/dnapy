@@ -14,7 +14,7 @@ def check_file(targetFile):
 
 
 def writeFastqRead(readFile,read):
-    readFile.write(bytes("@%s\n%s\n+%s\n%s\n" %(read[0],read[1],read[0],read[2])))
+    readFile.write(b"@%s\n%s\n+%s\n%s\n" %(read[0],read[1],read[0],read[2]))
 
 
 def closeFiles(openFiles):
