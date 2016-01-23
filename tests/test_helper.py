@@ -32,6 +32,6 @@ def test_openGzOrNormal(tmpdir):
     gz=helper.openNormalOrGz(str(gzFile))
     pred=['@1','22','+1','333','@55555','666666','+55555','7777777']
     for x,y in zip(gz,[x+'\n' for x in pred]):
-        assert x==y
+        assert x.encode('utf-8')==y.encode('utf-8')
 
 
