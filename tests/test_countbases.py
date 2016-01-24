@@ -44,9 +44,9 @@ def bamFile(tmpdir_factory):
     a.flag=0
     outFile.write(a)
     a.query_name = "read1"
-    a.query_sequence="AAAAACCCCCGGC"
+    a.query_sequence="TTAAAAACCCCCGGC"
     #a.query_qualities = pysam.qualitystring_to_array("(((((((((((((")
-    a.cigar = ((0,10), (2,2),(0,1),(1,1),(0,1))
+    a.cigar = ((5,5),(4,2),(0,10), (2,2),(0,1),(1,1),(0,1))
     outFile.write(a)
     outFile.close()
     pysam.index(str(p))
