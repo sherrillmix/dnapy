@@ -74,7 +74,7 @@ def test_goodFiles(tmpdir,bamFile):
     assert out['end']==42
     assert out['strand']=='+'
     assert out['ref']=='ref'
-    for read,start,strand,end in zip(getstartends.getStartsInFile(str(bamFile),maxGap=10),[29,33,33],['-','+','+'],[38,42,46]):
+    for read,start,strand,end in zip(getstartends.getStartsInFile(str(bamFile),maxGaps=10),[29,33,33],['-','+','+'],[38,42,46]):
         assert read['start']==start
         assert read['strand']==strand
         assert read['end']==end
@@ -99,22 +99,29 @@ def test_main(capsys,tmpdir,bamFile):
     assert 'Arguments' in err
     compare=getstartends.getStartsInFile(str(bamFile))
 
+    count=0
     for ii,jj in zip(out.split('\n')[1:],compare): 
         ii=ii.split(',')
+        count+=1
         assert ii[0]==jj['ref']
         assert int(ii[1])==jj['start']
         assert int(ii[2])==jj['end']
         assert ii[3]==jj['strand']
+    assert count==2
 
-    getstartends.main([str(bamFile)])
+    compare=getstartends.getStartsInFile(str(bamFile),maxGaps=10)
+    getstartends.main([str(bamFile),'-g 10'])
     out, err=capsys.readouterr()
 
+    count=0
     for ii,jj in zip(out.split('\n')[1:],compare): 
+        count+=1
         ii=ii.split(',')
         assert ii[0]==jj['ref']
         assert int(ii[1])==jj['start']
         assert int(ii[2])==jj['end']
         assert ii[3]==jj['strand']
+    assert count==3
 
 def test_commandline(capsys,bamFile):
     getstartends.main([str(bamFile)])
@@ -125,4 +132,3 @@ def test_commandline(capsys,bamFile):
         print(ii)
         print(jj)
         assert ii==jj==kk
-
