@@ -35,7 +35,8 @@ setup(name='dnapy',
     cmdclass = {'test': PyTest},
     entry_points={ 'console_scripts': [
         'countbases = dnapy.countbases:main',
-        'removeshort = dnapy.removeshort:main'
+        'removeshort = dnapy.removeshort:main',
+        'getstartends = dnapy.getstartends:main'
         ] },
     classifiers=[
         "Topic :: Scientific/Engineering :: Bio-Informatics",
