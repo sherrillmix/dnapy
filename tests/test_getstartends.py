@@ -74,12 +74,14 @@ def test_goodFiles(tmpdir,bamFile):
     assert out['end']==42
     assert out['strand']=='+'
     assert out['ref']=='ref'
-
-    for read,start,strand,end in zip(getstartends.getStartsInFile(str(bamFile)),[29,33,33],['-','+','+'],[38,42,45]):
+    for read,start,strand,end in zip(getstartends.getStartsInFile(str(bamFile),maxGap=10),[29,33,33],['-','+','+'],[38,42,46]):
         assert read['start']==start
         assert read['strand']==strand
         assert read['end']==end
-
+    for read,start,strand,end in zip(getstartends.getStartsInFile(str(bamFile)),[29,33],['-','+'],[38,42]):
+        assert read['start']==start
+        assert read['strand']==strand
+        assert read['end']==end
 
 
 def test_main(capsys,tmpdir,bamFile):

@@ -24,6 +24,7 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description="A program to pull start and end positions in a region. The command generates standard output with columns referenceName, start (1-based), end (1-based), strand ")
     parser.add_argument('bamFile', help='a bam file containing the alignment',type=helper.check_file)
     parser.add_argument("-v","--verbose", help="increase output verbosity to stderr", action="store_true")
+    parser.add_argument("-g","--gaps", help="maximum allowed insertions or deletions in a read. Otherwise discard", type=int)
     parser.add_argument("-r","--region", help="the region to count in",default=None)
     args=parser.parse_args(argv)
         
