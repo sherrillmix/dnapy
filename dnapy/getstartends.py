@@ -4,7 +4,6 @@ import sys
 from dnapy import helper
 
 
-MAX_DEPTH=1e9
 
 def getStartsInFile(inputFile,region=None,maxGaps=0):
     with pysam.AlignmentFile(inputFile, "rb" ) as samfile:
