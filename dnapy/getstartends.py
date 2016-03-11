@@ -27,13 +27,9 @@ def main(argv=None):
     parser.add_argument("-r","--region", help="the region to count in",default=None)
     parser.add_argument("-f","--file", help="a text file specifying several regions to count where each line gives a region e.g. chr1:1-100",default=None,type=helper.check_file)
     parser.add_argument("-n","--noHeader", help="suppress the initial header on csv output",action="store_true")
-    parser.add_argument("-c","--regionColumn", help="specify target region in first column (default: true for bed input, false for region input)",default=None)
+    parser.add_argument("-c","--regionColumn", help="specify target region in first column (default: don't show column)",action="store_true")
     args=parser.parse_args(argv)
-    if args.regionColumn is None:
-        if args.file is None:
-            regionColumn=False
-        else:
-            regionColumn=True
+ 
         
     if args.verbose:
         sys.stderr.write("Arguments: ")
@@ -45,10 +41,14 @@ def main(argv=None):
 
     if args.file is None:
         regions=[args.region]
+    else:
+        with open(args.file) as f:
+            regions=[x.strip('\n') for x in f.readlines()]
 
 
     if(not args.noHeader):
-        header="ref,start,end,strand"
+        if args.regionColumn: header="region,ref,start,end,strand"
+        else: header="ref,start,end,strand"
         print(header)
     for region in regions:
         for read in getStartsInFile(args.bamFile,region,args.maxGaps):

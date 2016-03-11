@@ -128,6 +128,30 @@ def test_main(capsys,tmpdir,bamFile):
     for ii,jj in zip(out.split('\n')[1:],noHead.split('\n')): 
         assert ii==jj
 
+    getstartends.main([str(bamFile),'-g 10', '-n','-c'])
+    regCol, err=capsys.readouterr()
+    for ii,jj in zip(out.split('\n')[1:],regCol.split('\n')):
+        if ii:
+            ii="None,"+ii
+        assert ii==jj
+
+    getstartends.main([str(bamFile), '-g 10','-n','-c','-r', 'ref:1-100'])
+    regCol, err=capsys.readouterr()
+    for ii,jj in zip(out.split('\n')[1:],regCol.split('\n')):
+        if ii:
+            ii="ref:1-100,"+ii
+        assert ii==jj
+
+
+    d = tmpdir.mkdir('dir')
+    p = d.join('test.regions')
+    p.write("ref:1-10\nref:1-100")
+    getstartends.main([str(bamFile), '-g 10','-n','-c','-f', str(p)])
+    fileOut, err=capsys.readouterr()
+    for ii,jj in zip(regCol.split('\n'),fileOut.split('\n')):
+        assert ii==jj
+
+
 def test_commandline(capsys,bamFile):
     getstartends.main([str(bamFile)])
     out, err=capsys.readouterr()
