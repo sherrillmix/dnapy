@@ -32,10 +32,21 @@ def main(argv=None):
         for key, value in vars(args).items():
             sys.stderr.write("   "+key+": "+str(value))
 
+    if args.region not None and args.file not None:
+        raise argparse.ArgumentError("Please specify either a region or region file but not both")
+
+    if args.file is None:
+        regions=[args.region]
+
+
     header="ref,start,end,strand"
     print(header)
-    for read in getStartsInFile(args.bamFile,args.region,args.maxGaps):
-        print("%s,%d,%d,%s" % (read["ref"],read['start'],read['end'],read['strand']))
+    for region in regions:
+        for read in getStartsInFile(args.bamFile,region,args.maxGaps):
+            if args.firstCol:
+                print("%s,%s,%d,%d,%s" % (region,read["ref"],read['start'],read['end'],read['strand']))
+            else:
+                print("%s,%d,%d,%s" % (read["ref"],read['start'],read['end'],read['strand']))
             
 
     
