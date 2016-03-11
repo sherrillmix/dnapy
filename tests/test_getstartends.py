@@ -123,6 +123,11 @@ def test_main(capsys,tmpdir,bamFile):
         assert ii[3]==jj['strand']
     assert count==3
 
+    getstartends.main([str(bamFile),'-g 10', '-n'])
+    noHead, err=capsys.readouterr()
+    for ii,jj in zip(out.split('\n')[1:],noHead.split('\n')): 
+        assert ii==jj
+
 def test_commandline(capsys,bamFile):
     getstartends.main([str(bamFile)])
     out, err=capsys.readouterr()
