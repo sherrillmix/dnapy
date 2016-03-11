@@ -25,15 +25,25 @@ def main(argv=None):
     parser.add_argument("-v","--verbose", help="increase output verbosity to stderr", action="store_true")
     parser.add_argument("-g","--maxGaps", help="maximum allowed insertions or deletions in a read. Otherwise discard", type=int,default=0)
     parser.add_argument("-r","--region", help="the region to count in",default=None)
+    parser.add_argument("-f","--file", help="a text file specifying several regions to count where each line gives a region e.g. chr1:1-100",default=None,type=check_file)
+    parser.add_argument("-n","--noHeader", help="suppress the initial header on csv output",action="store_true")
+    parser.add_argument("-c","--regionColumn", help="specify target region in first column (default: true for bed input, false for region input)",default=None)
     args=parser.parse_args(argv)
+    if args.regionColumn is None:
+        if args.file is None:
+            regionColumn=False
+        else
+            regionColumn=True
         
     if args.verbose:
         sys.stderr.write("Arguments: ")
         for key, value in vars(args).items():
             sys.stderr.write("   "+key+": "+str(value))
 
-    header="ref,start,end,strand"
-    print(header)
+    if(not args.noHeader):
+        header="ref,start,end,strand"
+        print(header)
+    for reg in regions:
     for read in getStartsInFile(args.bamFile,args.region,args.maxGaps):
         print("%s,%d,%d,%s" % (read["ref"],read['start'],read['end'],read['strand']))
             
