@@ -10,7 +10,12 @@ script:
 install:
   - pip install --upgrade setuptools
   - pip uninstall -y pytest py
-  - pip install -Iv codecov pytest>=2.8 pytest-cov coverage pysam>=0.8.4 py>=1.4.29
+  - pip install -Iv codecov 
+  - pip install -Iv pytest>=2.8
+  - pip install -Iv pytest-cov 
+  - pip install -Iv coverage 
+  - pip install -Iv py>=1.4.29
+  - pip install -Iv pysam>=0.8.4
   - pip freeze
   - python setup.py install
 after_success:
