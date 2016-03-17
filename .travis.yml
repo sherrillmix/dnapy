@@ -15,6 +15,7 @@ install:
   - pip install -Iv pytest-cov 
   - pip install -Iv coverage 
   - pip install -Iv py>=1.4.29
+  - pip install -Iv cython
   - pip install -Iv pysam
   - pip freeze
   - python setup.py install
