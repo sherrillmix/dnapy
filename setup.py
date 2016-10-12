@@ -36,6 +36,7 @@ setup(name='dnapy',
     entry_points={ 'console_scripts': [
         'countbases = dnapy.countbases:main',
         'removeshort = dnapy.removeshort:main',
+        'removereads = dnapy.removreads:main',
         'getstartends = dnapy.getstartends:main'
         ] },
     classifiers=[
