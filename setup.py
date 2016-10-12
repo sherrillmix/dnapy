@@ -22,7 +22,7 @@ class PyTest(TestCommand):
         sys.exit(errno)
 
 setup(name='dnapy',
-    version='0.1',
+    version='0.1.1',
     description='Some handy functions for dealing with sequence alignment files.',
     url='http://github.com/sherrillmix/dnapy',
     author='Scott Sherrill-Mix',
@@ -36,7 +36,7 @@ setup(name='dnapy',
     entry_points={ 'console_scripts': [
         'countbases = dnapy.countbases:main',
         'removeshort = dnapy.removeshort:main',
-        'removereads = dnapy.removreads:main',
+        'removereads = dnapy.removereads:main',
         'getstartends = dnapy.getstartends:main'
         ] },
     classifiers=[
