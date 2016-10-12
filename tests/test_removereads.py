@@ -1,5 +1,6 @@
 import pytest
 from dnapy import removereads
+from dnapy import helper
 import os
 import stat
 import pysam
@@ -47,6 +48,15 @@ def test_main(capsys,tmpdir):
     for ii,jj in zip([x.rstrip('\n') for x in o.readlines()],['@seq1','AAA','+seq1','(((']):
         assert ii==jj
     for ii,jj in zip([x.rstrip('\n') for x in o2.readlines()],['@seq1z','TTT','+seq1z','(((']):
+        assert ii==jj
+    os.chdir(str(d))
+    removereads.main([str(p),str(p2),'-f',str(f),'-d1'])
+    out, err=capsys.readouterr()
+    for ii,jj in zip(err.split('\n'),['.','Good reads: 1 Bad reads: 2']):
+        assert ii==jj
+    for ii,jj in zip([x.rstrip('\n') for x in helper.openNormalOrGz('out1.fastq.gz').readlines()],['@seq1','AAA','+seq1','(((']):
+        assert ii==jj
+    for ii,jj in zip([x.rstrip('\n') for x in helper.openNormalOrGz('out2.fastq.gz').readlines()],['@seq1z','TTT','+seq1z','(((']):
         assert ii==jj
 
 
