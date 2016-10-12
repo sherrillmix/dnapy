@@ -1,6 +1,6 @@
 .PHONY: install test
 
-README.rst: dnapy/*.py preREADME.rst setup.py
+README.rst: dnapy/*.py preREADME.rst setup.py makeReadme.py
 	#need a readme to install
 	cp preREADME.rst README.rst
 	make install

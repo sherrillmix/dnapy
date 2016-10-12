@@ -33,7 +33,9 @@ The package provides the scripts:
 
 getstartends
 ~~~~
+
 ::
+  
   usage: getstartends [-h] [-v] [-g MAXGAPS] [-r REGION] [-f FILE] [-n] [-c]
                       bamFile
   
@@ -60,7 +62,9 @@ getstartends
   
 countbases
 ~~~~
+
 ::
+  
   usage: countbases [-h] [-v] [-r REGION] [-s] bamFile
   
   A program to count the number of bases at each position in a region. The
@@ -81,7 +85,9 @@ countbases
   
 removereads
 ~~~~
+
 ::
+  
   usage: removereads [-h] [-d DOTS] -f FILTERFILE [-o OUTPUTFILES]
                      fastqFiles [fastqFiles ...]
   
@@ -109,7 +115,9 @@ removereads
   
 removeshort
 ~~~~
+
 ::
+  
   usage: removeshort [-h] [-d DOTS] [-l MINLENGTH] fastqFile
   
   A program to remove short reads from a fastq file.
