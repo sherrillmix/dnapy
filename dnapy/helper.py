@@ -11,6 +11,13 @@ def check_file(targetFile):
     else:
         raise argparse.ArgumentTypeError(targetFile+' is not readable')
 
+def check_dir(targetFile):
+    if not os.path.isdir(targetFile):
+        raise argparse.ArgumentTypeError(targetFile+' is not a directory')
+    if os.access(targetFile, os.W_OK):
+        return targetFile
+    else:
+        raise argparse.ArgumentTypeError(targetFile+' is not writeable')
 
 
 def writeFastqRead(readFile,read):

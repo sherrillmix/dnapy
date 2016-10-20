@@ -5,7 +5,7 @@ from dnapy import helper
 import argparse
 
 
-def test_checkFile(tmpdir):
+def test_check_file(tmpdir):
     d = tmpdir.mkdir('dir')
     p = d.join('test.txt')
     with pytest.raises(argparse.ArgumentTypeError):
@@ -20,6 +20,19 @@ def test_checkFile(tmpdir):
     with pytest.raises(argparse.ArgumentTypeError):
         helper.check_file(str(p))
 
+def test_check_dir(tmpdir):
+    d = tmpdir.mkdir('dir')
+    assert helper.check_dir(str(d))==str(d)
+    p = d.join('test.txt')
+    with pytest.raises(argparse.ArgumentTypeError):
+        helper.check_dir(str(p))
+    p.write("test")
+    with pytest.raises(argparse.ArgumentTypeError):
+        helper.check_dir(str(p))
+    #make unwriteable
+    os.chmod(str(d),os.stat(str(d)).st_mode & ~stat.S_IWRITE)
+    with pytest.raises(argparse.ArgumentTypeError):
+        helper.check_dir(str(d))
 
 def test_openGzOrNormal(tmpdir):
     d = tmpdir.mkdir('dir')
