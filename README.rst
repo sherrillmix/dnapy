@@ -99,7 +99,7 @@ removereads
   
   positional arguments:
     fastqFiles            a fastq or fastqs (potentially gzipped) file
-                          containing the alignment
+                          containing the reads
   
   optional arguments:
     -h, --help            show this help message and exit
