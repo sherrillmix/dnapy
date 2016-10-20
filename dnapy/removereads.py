@@ -2,7 +2,6 @@
 import sys
 import argparse
 import gzip
-import atexit
 import Bio.SeqIO.QualityIO
 from dnapy import helper
 
@@ -51,7 +50,7 @@ class filterFastqIter:
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description="A program to filter reads by name from a single/set of fastq file(s). The script looks for reads which have a name line where the string before a space exactly matches a pattern. If multiple files are passed in, then they are processed in sync and if any name matches that read is discarded from all files.")
-    parser.add_argument('fastqFiles', help='a fastq or fastqs (potentially gzipped) file containing the alignment',type=helper.check_file,nargs='+')
+    parser.add_argument('fastqFiles', help='a fastq or fastqs (potentially gzipped) file containing the reads',type=helper.check_file,nargs='+')
     parser.add_argument("-d","--dots", help="output dot to stderr every X reads. Input a negative number to suppress output (default:-1)", default=-1,type=int)
     parser.add_argument('-f','--filterFile', help='a file (potentially gzipped) file containing the names of reads to be filtered one per line',type=helper.check_file,required=True)
     parser.add_argument('-o','--outputFiles', help='a comma separated string giving a list of output files (one for each input fastq file). default(out1.fastq.gz ... outn.fastq.gz where n is the number of fastqFiles)',type=str)
