@@ -11,7 +11,7 @@ def test_readSimpleCsv(tmpdir):
     with pytest.raises(argparse.ArgumentTypeError):
         helper.checkFile(str(p))
     with helper.openNormalOrGz(str(p),'w') as f:
-        f.write("1,2,3\n\n  \na,bb,ccc\n  2,3,4  ")
+        f.write("1,'2',3   \n  \n  \na,\"bb\",ccc\n  2,3,4  ")
     assert(helper.readSimpleCsv(str(p))==[['1','2','3'],['a','bb','ccc'],["2","3","4"]])
     with helper.openNormalOrGz(str(p),'w') as f:
         f.write("1,2,3\n\n  \na,bb,ccc,d\n  2,3,4  ")

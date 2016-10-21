@@ -5,7 +5,7 @@ import sys
 
 def readSimpleCsv(csvFile):
     lines=[line.strip() for line in openNormalOrGz(csvFile)]
-    splits=[line.split(',') for line in lines if line]
+    splits=[[entry.strip('" \'') for entry in line.split(',')] for line in lines if line]
     n=[len(x) for x in splits]
     if any([x!=n[0] for x in n]):
         raise ValueError('All rows do not have same numbers of entries in '+csvFile)
