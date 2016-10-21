@@ -5,6 +5,18 @@ from dnapy import helper
 import argparse
 
 
+def test_readSimpleCsv(tmpdir):
+    d = tmpdir.mkdir('dir')
+    p = d.join('test.txt')
+    with pytest.raises(argparse.ArgumentTypeError):
+        helper.checkFile(str(p))
+    with helper.openNormalOrGz(str(p),'w') as f:
+        f.write("1,2,3\n\n  \na,bb,ccc\n  2,3,4  ")
+    assert(helper.readSimpleCsv(str(p))==[['1','2','3'],['a','bb','ccc'],["2","3","4"]])
+    with helper.openNormalOrGz(str(p),'w') as f:
+        f.write("1,2,3\n\n  \na,bb,ccc,d\n  2,3,4  ")
+    with pytest.raises(ValueError):
+        helper.readSimpleCsv(str(p))
 
 def test_checkFile(tmpdir):
     d = tmpdir.mkdir('dir')

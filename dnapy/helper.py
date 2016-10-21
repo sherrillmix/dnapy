@@ -3,6 +3,14 @@ import argparse
 import gzip
 import sys
 
+def readSimpleCsv(csvFile):
+    lines=[line.strip() for line in openNormalOrGz(csvFile)]
+    splits=[line.split(',') for line in lines if line]
+    n=[len(x) for x in splits]
+    if any([x!=n[0] for x in n]):
+        raise ValueError('All rows do not have same numbers of entries in '+csvFile)
+    return splits
+
 def checkFile(targetFile):
     if not os.path.isfile(targetFile):
         raise argparse.ArgumentTypeError(targetFile+' is not a file')
