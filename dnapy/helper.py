@@ -3,7 +3,7 @@ import argparse
 import gzip
 import sys
 
-def check_file(targetFile):
+def checkFile(targetFile):
     if not os.path.isfile(targetFile):
         raise argparse.ArgumentTypeError(targetFile+' is not a file')
     if os.access(targetFile, os.R_OK):
@@ -11,14 +11,15 @@ def check_file(targetFile):
     else:
         raise argparse.ArgumentTypeError(targetFile+' is not readable')
 
-def check_dir(targetFile):
+def checkDir(targetFile,create=True):
+    if create and not os.path.exists(targetFile):
+        os.makedirs(targetFile)
     if not os.path.isdir(targetFile):
         raise argparse.ArgumentTypeError(targetFile+' is not a directory')
     if os.access(targetFile, os.W_OK):
         return targetFile
     else:
         raise argparse.ArgumentTypeError(targetFile+' is not writeable')
-
 
 def writeFastqRead(readFile,read):
     out="@%s\n%s\n+%s\n%s\n" %(read[0],read[1],read[0],read[2])

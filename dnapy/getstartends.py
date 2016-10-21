@@ -21,11 +21,11 @@ def main(argv=None):
         argv=sys.argv[1:]
 
     parser = argparse.ArgumentParser(description="A program to pull start and end positions in a region. The command generates standard output with columns referenceName, start (1-based), end (1-based), strand ")
-    parser.add_argument('bamFile', help='a bam file containing the alignment',type=helper.check_file)
+    parser.add_argument('bamFile', help='a bam file containing the alignment',type=helper.checkFile)
     parser.add_argument("-v","--verbose", help="increase output verbosity to stderr", action="store_true")
     parser.add_argument("-g","--maxGaps", help="maximum allowed insertions or deletions in a read. Otherwise discard", type=int,default=0)
     parser.add_argument("-r","--region", help="the region to count in",default=None)
-    parser.add_argument("-f","--file", help="a text file specifying several regions to count where each line gives a region e.g. chr1:1-100",default=None,type=helper.check_file)
+    parser.add_argument("-f","--file", help="a text file specifying several regions to count where each line gives a region e.g. chr1:1-100",default=None,type=helper.checkFile)
     parser.add_argument("-n","--noHeader", help="suppress the initial header on csv output",action="store_true")
     parser.add_argument("-c","--regionColumn", help="specify target region in first column (default: don't show column)",action="store_true")
     args=parser.parse_args(argv)

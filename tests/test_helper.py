@@ -5,34 +5,39 @@ from dnapy import helper
 import argparse
 
 
-def test_check_file(tmpdir):
+
+def test_checkFile(tmpdir):
     d = tmpdir.mkdir('dir')
     p = d.join('test.txt')
     with pytest.raises(argparse.ArgumentTypeError):
-        helper.check_file(str(d))
+        helper.checkFile(str(d))
     #doesn't exist yet
     with pytest.raises(argparse.ArgumentTypeError):
-        helper.check_file(str(p))
+        helper.checkFile(str(p))
     p.write("test")
-    assert helper.check_file(str(p))==str(p)
+    assert helper.checkFile(str(p))==str(p)
     #make unreadable
     os.chmod(str(p),os.stat(str(p)).st_mode & ~stat.S_IREAD)
     with pytest.raises(argparse.ArgumentTypeError):
-        helper.check_file(str(p))
+        helper.checkFile(str(p))
 
-def test_check_dir(tmpdir):
+def test_checkDir(tmpdir):
     d = tmpdir.mkdir('dir')
-    assert helper.check_dir(str(d))==str(d)
+    assert helper.checkDir(str(d))==str(d)
     p = d.join('test.txt')
     with pytest.raises(argparse.ArgumentTypeError):
-        helper.check_dir(str(p))
+        helper.checkDir(str(p),False)
     p.write("test")
     with pytest.raises(argparse.ArgumentTypeError):
-        helper.check_dir(str(p))
+        helper.checkDir(str(p))
     #make unwriteable
     os.chmod(str(d),os.stat(str(d)).st_mode & ~stat.S_IWRITE)
     with pytest.raises(argparse.ArgumentTypeError):
-        helper.check_dir(str(d))
+        helper.checkDir(str(d))
+    d2=os.path.join(str(tmpdir),'test_make_dir')
+    assert not os.path.exists(str(d2))
+    assert helper.checkDir(str(d2))==str(d2)
+    assert os.path.exists(str(d2))
 
 def test_openGzOrNormal(tmpdir):
     d = tmpdir.mkdir('dir')

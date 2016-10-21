@@ -31,7 +31,7 @@ def main(argv=None):
         argv=sys.argv[1:]
 
     parser = argparse.ArgumentParser(description="A program to count the number of bases at each position in a region. The command generates standard output with columns referenceName, position, numberOfReads, and numbers of A, C, G, T (or A+, A-, C+, C-, G+, G-, T+, T- if --strand).")
-    parser.add_argument('bamFile', help='a bam file containing the alignment',type=helper.check_file)
+    parser.add_argument('bamFile', help='a bam file containing the alignment',type=helper.checkFile)
     parser.add_argument("-v","--verbose", help="increase output verbosity to stderr", action="store_true")
     parser.add_argument("-r","--region", help="the region to count in",default=None)
     parser.add_argument("-s","--strand", help="break base counts into positive and negative strand alignments", action="store_true")
