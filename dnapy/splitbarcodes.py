@@ -4,6 +4,7 @@ import argparse
 import gzip
 import Bio.SeqIO.QualityIO
 from dnapy import helper
+import os
 
 
 class barodeFastqIter:
@@ -50,7 +51,10 @@ def main(argv=None):
     parser.add_argument('-o','--outputPath', help='a string giving the desired output directory',type=helper.checkDir,default='.')
 
     args=parser.parse_args(argv)
-    #MAKE OUTFILE NAMES outputFiles os.path.join('/my/root/directory', 'in', 'here')
+    bars=helper.readSimpleCsv(args.barcodeFile)
+    sampleNames=[os.path.join(args.outputPath,x[0])+".fastq" for x in bars]
+    print(sampleNames)
+    sys.exit(0)
     if(args.outputFiles is None):
         outputFiles=['out'+str(ii)+'.fastq.gz' for ii in range(1,len(args.fastqFiles)+1)]
     else:
