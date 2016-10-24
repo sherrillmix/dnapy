@@ -33,37 +33,35 @@ class barodeFastqIter:
 
     def __next__(self):
         for currentReads,currentBars in zip(zip(*self.fastqs),zip(*self.indexs)):
-            names=[x[0].partition(' ')[0] for x in currentReads]
-            bars=[x[1] for x in currentBars]
-            #TODO ASSIGN BARCODE
-            if not any([x in self.patterns for x in names]):
+            bars=tuple([x[1] for x in currentBars])
+            if bars in self.barcodes:
                 self.nGood+=1
-                return currentReads
+                return (bars,currentReads)
             else:
                 self.nBad+=1
         raise StopIteration()
 
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description="A program to take a list of barcodes and one or more fastq reads and one or two index reads and output reads matching the barcodes into a seperate file for each barcode. The script takes read files and index files where the reads and indexs are in the same order and outputs reads which match the appropriate barcodes into separate files.")
-    parser.add_argument('fastqFiles', help='a fastq or fastqs (potentially gzipped) file containing the reads',type=helper.checkFile,nargs='+')
+    parser.add_argument('fastqFiles', help='a fastq file(s) (potentially gzipped) containing the sequence reads',type=helper.checkFile,nargs='+')
+    parser.add_argument('-i','--indexFiles', help='a fastq file(s) (potentially gzipped) containing the index reads',type=helper.checkFile,nargs='+')
     parser.add_argument("-d","--dots", help="output dot to stderr every X reads. Input a negative number to suppress output (default:-1)", default=-1,type=int)
     parser.add_argument('-b','--barcodeFile', help='a file (potentially gzipped) file containing comma separated sample names, first barcode and second barcode (with no header and no commas in the sample names)',type=helper.checkFile,required=True)
     parser.add_argument('-o','--outputPath', help='a string giving the desired output directory',type=helper.checkDir,default='.')
 
     args=parser.parse_args(argv)
-    bars=helper.readSimpleCsv(args.barcodeFile)
-    sampleNames=[os.path.join(args.outputPath,x[0])+".fastq" for x in bars]
-    print(sampleNames)
-    sys.exit(0)
-    if(args.outputFiles is None):
-        outputFiles=['out'+str(ii)+'.fastq.gz' for ii in range(1,len(args.fastqFiles)+1)]
-    else:
-        outputFiles=args.outputFiles.split(',')
-    if(len(outputFiles)!=len(args.fastqFiles)):
-        argparse.ArgumentTypeError("Input and output file numbers do not match")
-    outHandles=[helper.openNormalOrGz(x,'w') for x in outputFiles]
 
-    barcodes1=readBarcodes(args.barcodeFile)
+    barcodes=helper.readSimpleCsv(args.barcodeFile)
+    if(len(args.indexFiles)!=len(barcodes[0])-1):
+        argparse.ArgumentTypeError("Number of index files and index columns in the barcodeFile do not agree")
+
+    outputFiles=[os.path.join(args.outputPath,x[0])+".fastq.gz" for x in barcodes]
+    bars=[tuple(x[1:]) for x in barcodes]
+    outHandles=dict(zip(bars,[helper.openNormalOrGz(x,'w') for x in outputFiles]))
+
+    sys.exit(0)
+
 
     with filterFastqIter(args.fastqFiles,patterns) as fastqIter:
         for currentReads in fastqIter:
