@@ -3,8 +3,6 @@ from dnapy import removereads
 from dnapy import helper
 import os
 import stat
-import pysam
-import subprocess
 
 def test_badFiles(tmpdir):
     d = tmpdir.mkdir('dir')
