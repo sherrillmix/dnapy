@@ -36,7 +36,11 @@ def writeFastqRead(readFile,read):
 
 
 def closeFiles(openFiles):
-    for openFile in openFiles:
+    try:
+        iterator = openFiles.iteritems()
+    except AttributeError:
+        iterator = enumerate(openFiles)
+    for _, openFile in iterator:
         openFile.close()
 
 def openNormalOrGz(gzFile,mode='r'):

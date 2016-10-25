@@ -33,6 +33,20 @@ def test_checkFile(tmpdir):
     with pytest.raises(argparse.ArgumentTypeError):
         helper.checkFile(str(p))
 
+def test_closeFiles(tmpdir):
+    d = tmpdir.mkdir('dir')
+    ps = [d.join('test'+str(ii)+'.txt') for ii in range(10)]
+    handles = [helper.openNormalOrGz(str(p),'w') for p in ps]
+    helper.closeFiles(handles)
+    for ii in handles:
+        with pytest.raises(ValueError):
+            ii.write()
+    handles = dict(zip(range(10),[helper.openNormalOrGz(str(p),'w') for p in ps]))
+    helper.closeFiles(handles)
+    for _,ii in handles.items():
+        with pytest.raises(ValueError):
+            ii.write()
+
 def test_checkDir(tmpdir):
     d = tmpdir.mkdir('dir')
     assert helper.checkDir(str(d))==str(d)
