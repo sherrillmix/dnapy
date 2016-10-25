@@ -7,7 +7,7 @@ from dnapy import helper
 import os
 
 
-class barodeFastqIter:
+class barcodeFastqIter:
     def __init__(self, fastqFiles,indexFiles,barcodes):
         self.nGood = 0
         self.nBad = 0
@@ -53,19 +53,18 @@ def main(argv=None):
     args=parser.parse_args(argv)
 
     barcodes=helper.readSimpleCsv(args.barcodeFile)
-    if(len(args.indexFiles)!=len(barcodes[0])-1):
-        argparse.ArgumentTypeError("Number of index files and index columns in the barcodeFile do not agree")
+    nFiles=len(args.indexFiles)
+    if(nFiles!=len(barcodes[0])-1):
+        raise argparse.ArgumentTypeError("Number of index files and index columns in the barcodeFile do not agree")
 
-    outputFiles=[os.path.join(args.outputPath,x[0])+".fastq.gz" for x in barcodes]
+    outputFiles=[[os.path.join(args.outputPath,x[0])+"_"+str(ii+1)+".fastq.gz" for ii in xrange(nFiles)] for x in barcodes]
     bars=[tuple(x[1:]) for x in barcodes]
-    outHandles=dict(zip(bars,[helper.openNormalOrGz(x,'w') for x in outputFiles]))
-
-    sys.exit(0)
+    outHandles=dict(zip(bars,[[helper.openNormalOrGz(yy,'w') for yy in xx] for xx in outputFiles]))
 
 
-    with filterFastqIter(args.fastqFiles,patterns) as fastqIter:
+    with barcodeFastqIter(args.fastqFiles,args.indexFiles,bars) as fastqIter:
         for currentReads in fastqIter:
-            for read,outFile in zip(currentReads,outHandles):
+            for read,outFile in zip(currentReads,outHandles[bar]):
                 helper.writeFastqRead(outFile,read)
             if args.dots>0:
                 if fastqIter.nGood % args.dots==0:
@@ -74,7 +73,8 @@ def main(argv=None):
         if args.dots>0:
             sys.stderr.write("\nGood reads: "+str(fastqIter.nGood)+" Bad reads: "+str(fastqIter.nBad)+"\n")
 
-    helper.closeFiles(outHandles)
+    for key in outHandles:
+        helper.closeFiles(outHandles[key])
 
 
 if __name__ == '__main__':
