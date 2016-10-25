@@ -37,7 +37,7 @@ def writeFastqRead(readFile,read):
 
 def closeFiles(openFiles):
     try:
-        iterator = openFiles.iteritems()
+        iterator = openFiles.items()
     except AttributeError:
         iterator = enumerate(openFiles)
     for _, openFile in iterator:
