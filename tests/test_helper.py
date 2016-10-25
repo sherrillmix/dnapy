@@ -40,12 +40,12 @@ def test_closeFiles(tmpdir):
     helper.closeFiles(handles)
     for ii in handles:
         with pytest.raises(ValueError):
-            ii.write()
+            ii.write("X")
     handles = dict(zip(range(10),[helper.openNormalOrGz(str(p),'w') for p in ps]))
     helper.closeFiles(handles)
     for _,ii in handles.items():
         with pytest.raises(ValueError):
-            ii.write()
+            ii.write("X")
 
 def test_checkDir(tmpdir):
     d = tmpdir.mkdir('dir')
