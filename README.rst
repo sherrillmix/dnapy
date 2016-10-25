@@ -31,6 +31,40 @@ Usage
 -----
 The package provides the scripts:
 
+splitbarcodes
+~~~~
+
+::
+  
+  usage: splitbarcodes [-h] [-i INDEXFILES [INDEXFILES ...]] [-d DOTS] -b
+                       BARCODEFILE [-o OUTPUTPATH]
+                       fastqFiles [fastqFiles ...]
+  
+  A program to take a list of barcodes and one or more fastq reads and one or
+  two index reads and output reads matching the barcodes into a seperate file
+  for each barcode. The script takes read files and index files where the reads
+  and indexs are in the same order and outputs reads which match the appropriate
+  barcodes into separate files.
+  
+  positional arguments:
+    fastqFiles            a fastq file(s) (potentially gzipped) containing the
+                          sequence reads
+  
+  optional arguments:
+    -h, --help            show this help message and exit
+    -i INDEXFILES [INDEXFILES ...], --indexFiles INDEXFILES [INDEXFILES ...]
+                          a fastq file(s) (potentially gzipped) containing the
+                          index reads
+    -d DOTS, --dots DOTS  output dot to stderr every X reads. Input a negative
+                          number to suppress output (default:-1)
+    -b BARCODEFILE, --barcodeFile BARCODEFILE
+                          a file (potentially gzipped) file containing comma
+                          separated sample names, first barcode and second
+                          barcode (with no header and no commas in the sample
+                          names)
+    -o OUTPUTPATH, --outputPath OUTPUTPATH
+                          a string giving the desired output directory
+  
 getstartends
 ~~~~
 
