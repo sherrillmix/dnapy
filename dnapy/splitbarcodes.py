@@ -62,8 +62,11 @@ def main(argv=None):
     if(len(args.indexFiles)!=len(barcodes[0])-1):
         raise argparse.ArgumentTypeError("Number of index files and index columns in the barcodeFile do not agree")
 
-    outputFiles=[[os.path.join(args.outputPath,x[0])+"_"+str(ii+1)+".fastq.gz" for ii in range(nFiles)] for x in barcodes]
-    bars=[tuple(x[1:]) for x in barcodes]
+    samples=[xx[0] for xx in barcodes]
+    if(len(set(samples))!=len(samples)):
+        raise argparse.ArgumentTypeError("Two or more samples share the same name")
+    outputFiles=[[os.path.join(args.outputPath,xx)+"_"+str(ii+1)+".fastq.gz" for ii in range(nFiles)] for xx in samples]
+    bars=[tuple(xx[1:]) for xx in barcodes]
     barSet=set(bars)
     if len(barSet)!=len(bars):
         raise argparse.ArgumentTypeError("Two or more samples share the same set of barcodes")

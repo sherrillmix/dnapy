@@ -3,6 +3,7 @@ from dnapy import splitbarcodes
 from dnapy import helper
 import os
 import stat
+import argparse
 
 def test_badFiles(tmpdir):
     d = tmpdir.mkdir('dir')
@@ -49,9 +50,20 @@ def test_main(capsys,tmpdir):
     p2 = d.join('test2.fastq')
     p2.write("@seq1z\nTTT\n+\n(((\n@seq2z\nTT\n+\n((\n@seq3\nT\n+\n(\n")
     b = d.join('test.filter')
-    b.write("test,AAA")
     o = d.join('test_1.fastq.gz')
     o2 = d.join('test_2.fastq.gz')
+    #duplicate barcode
+    b.write("test,AAA\ntest2,AAA\ntest3,AAT")
+    with pytest.raises(argparse.ArgumentTypeError):
+        splitbarcodes.main([str(p1),'-i',str(p1),'-b',str(b),'-o',str(d),'-d1'])
+    #duplicate sample name
+    b.write("test,AAA\ntest,AAC\ntest3,AAT")
+    with pytest.raises(argparse.ArgumentTypeError):
+        splitbarcodes.main([str(p1),'-i',str(p1),'-b',str(b),'-o',str(d),'-d1'])
+    b.write("test,AAA")
+    #two index files, 1 barcode
+    with pytest.raises(argparse.ArgumentTypeError):
+        splitbarcodes.main([str(p1),'-i',str(p1),str(p1),'-b',str(b),'-o',str(d),'-d1'])
     splitbarcodes.main([str(p1),'-i',str(p1),'-b',str(b),'-o',str(d),'-d1'])
     out, err=capsys.readouterr()
     for ii,jj in zip(err.split('\n'),['.','Good reads: 1 Bad reads: 2']):
