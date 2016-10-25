@@ -3,6 +3,7 @@ from dnapy import removereads
 from dnapy import helper
 import os
 import stat
+import argparse
 
 def test_badFiles(tmpdir):
     d = tmpdir.mkdir('dir')
@@ -42,13 +43,17 @@ def test_main(capsys,tmpdir):
     f.write("seq2\nseq3")
     o = d.join('test.out')
     o2 = d.join('test2.out')
+    with pytest.raises(argparse.ArgumentTypeError):
+        removereads.main([str(p),'-f',str(f),'-o',str(o),str(o),'-d1'])
+    with pytest.raises(argparse.ArgumentTypeError):
+        removereads.main([str(p),str(p),'-f',str(f),'-o',str(o),'-d1'])
     removereads.main([str(p),'-f',str(f),'-o',str(o),'-d1'])
     out, err=capsys.readouterr()
     for ii,jj in zip(err.split('\n'),['.','Good reads: 1 Bad reads: 2']):
         assert ii==jj
     for ii,jj in zip([x.rstrip('\n') for x in o.readlines()],['@seq1','AAA','+seq1','(((']):
         assert ii==jj
-    removereads.main([str(p),str(p2),'-f',str(f),'-o',str(o)+","+str(o2),'-d1'])
+    removereads.main([str(p),str(p2),'-f',str(f),'-o',str(o),str(o2),'-d1'])
     out, err=capsys.readouterr()
     for ii,jj in zip(err.split('\n'),['.','Good reads: 1 Bad reads: 2']):
         assert ii==jj
