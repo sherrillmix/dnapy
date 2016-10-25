@@ -24,6 +24,15 @@ def test_badFiles(tmpdir):
 
 
 def test_main(capsys,tmpdir):
+    with pytest.raises(SystemExit):
+        removereads.main()
+    out, err=capsys.readouterr()
+    assert 'usage' in err
+    with pytest.raises(SystemExit):
+        removereads.main(['-h'])
+    out, err=capsys.readouterr()
+    assert 'usage' in out
+
     d = tmpdir.mkdir('dir')
     p = d.join('test.fastq')
     p.write("@seq1\nAAA\n+\n(((\n@seq2\nTT\n+\n((\n@seq3\nT\n+\n(\n")
