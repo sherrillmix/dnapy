@@ -11,11 +11,6 @@ try:
 except ImportError: # will be 3.x series
     pass
 
-
-
-
-
-
 class filterFastqIter:
     def __init__(self, fastqFiles,patterns):
         self.nGood = 0
