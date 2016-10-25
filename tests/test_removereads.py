@@ -7,13 +7,13 @@ import stat
 def test_badFiles(tmpdir):
     d = tmpdir.mkdir('dir')
     p = d.join('test.txt')
+    #not a file
     with pytest.raises(IOError):
-        next(removereads.filterFastqIter([str(p)],set()))
+        next(removereads.filterFastqIter([str(d)],set()))
     #doesn't exist yet
     with pytest.raises(IOError):
         removereads.filterFastqIter([str(p)],set())
     #incorrectly formatted file
-    #doesn't exist yet
     p.write("@test\nAAAA\n+\n1") #qual and seq different
     with pytest.raises(ValueError):
         next(removereads.filterFastqIter([str(p)],set()))
