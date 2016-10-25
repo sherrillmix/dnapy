@@ -6,6 +6,11 @@ import Bio.SeqIO.QualityIO
 from dnapy import helper
 import os
 
+#make sure zip is iteratable
+try:
+    from itertools import izip as zip
+except ImportError: # will be 3.x series
+    pass
 
 class barcodeFastqIter:
     def __init__(self, fastqFiles,indexFiles,barcodes):
@@ -36,7 +41,7 @@ class barcodeFastqIter:
             bars=tuple([x[1] for x in currentBars])
             if bars in self.barcodes:
                 self.nGood+=1
-                return (bars,currentReads)
+                return (currentReads,bars)
             else:
                 self.nBad+=1
         raise StopIteration()
@@ -52,18 +57,21 @@ def main(argv=None):
 
     args=parser.parse_args(argv)
 
+    nFiles=len(args.fastqFiles)
     barcodes=helper.readSimpleCsv(args.barcodeFile)
-    nFiles=len(args.indexFiles)
-    if(nFiles!=len(barcodes[0])-1):
+    if(len(args.indexFiles)!=len(barcodes[0])-1):
         raise argparse.ArgumentTypeError("Number of index files and index columns in the barcodeFile do not agree")
 
     outputFiles=[[os.path.join(args.outputPath,x[0])+"_"+str(ii+1)+".fastq.gz" for ii in xrange(nFiles)] for x in barcodes]
     bars=[tuple(x[1:]) for x in barcodes]
+    barSet=set(bars)
+    if len(barSet)!=len(bars):
+        raise argparse.ArgumentTypeError("Two or more samples share the same set of barcodes")
     outHandles=dict(zip(bars,[[helper.openNormalOrGz(yy,'w') for yy in xx] for xx in outputFiles]))
 
 
     with barcodeFastqIter(args.fastqFiles,args.indexFiles,bars) as fastqIter:
-        for currentReads in fastqIter:
+        for currentReads,bar in fastqIter:
             for read,outFile in zip(currentReads,outHandles[bar]):
                 helper.writeFastqRead(outFile,read)
             if args.dots>0:
