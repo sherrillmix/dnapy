@@ -58,7 +58,7 @@ splitbarcodes
     -d DOTS, --dots DOTS  output dot to stderr every X reads. Input a negative
                           number to suppress output (default:-1)
     -b BARCODEFILE, --barcodeFile BARCODEFILE
-                          a file (potentially gzipped) file containing comma
+                          a (potentially gzipped) file containing comma
                           separated sample names, first barcode and second
                           barcode (with no header and no commas in the sample
                           names)
@@ -122,7 +122,8 @@ removereads
 
 ::
   
-  usage: removereads [-h] [-d DOTS] -f FILTERFILE [-o OUTPUTFILES]
+  usage: removereads [-h] [-d DOTS] -f FILTERFILE
+                     [-o [OUTPUTFILES [OUTPUTFILES ...]]]
                      fastqFiles [fastqFiles ...]
   
   A program to filter reads by name from a single/set of fastq file(s). The
@@ -132,20 +133,20 @@ removereads
   files.
   
   positional arguments:
-    fastqFiles            a fastq or fastqs (potentially gzipped) file
-                          containing the reads
+    fastqFiles            a (potentially gzipped) fastq file(s) containing the
+                          reads with the order of reads the same in all files
   
   optional arguments:
     -h, --help            show this help message and exit
     -d DOTS, --dots DOTS  output dot to stderr every X reads. Input a negative
                           number to suppress output (default:-1)
     -f FILTERFILE, --filterFile FILTERFILE
-                          a file (potentially gzipped) file containing the names
-                          of reads to be filtered one per line
-    -o OUTPUTFILES, --outputFiles OUTPUTFILES
-                          a comma separated string giving a list of output files
-                          (one for each input fastq file). default(out1.fastq.gz
-                          ... outn.fastq.gz where n is the number of fastqFiles)
+                          a (potentially gzipped) file containing the names of
+                          reads to be filtered one per line
+    -o [OUTPUTFILES [OUTPUTFILES ...]], --outputFiles [OUTPUTFILES [OUTPUTFILES ...]]
+                          an output file(s) (one for each input fastq file).
+                          default(out1.fastq.gz ... outn.fastq.gz where n is the
+                          number of fastqFiles)
   
 removeshort
 ~~~~
@@ -157,7 +158,7 @@ removeshort
   A program to remove short reads from a fastq file.
   
   positional arguments:
-    fastqFile             a fastq (potentially gzipped) file containing the
+    fastqFile             a (potentially gzipped) fastq file containing the
                           alignment
   
   optional arguments:

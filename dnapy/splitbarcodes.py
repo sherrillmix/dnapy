@@ -52,7 +52,7 @@ def main(argv=None):
     parser.add_argument('fastqFiles', help='a fastq file(s) (potentially gzipped) containing the sequence reads',type=helper.checkFile,nargs='+')
     parser.add_argument('-i','--indexFiles', help='a fastq file(s) (potentially gzipped) containing the index reads',type=helper.checkFile,nargs='+')
     parser.add_argument("-d","--dots", help="output dot to stderr every X reads. Input a negative number to suppress output (default:-1)", default=-1,type=int)
-    parser.add_argument('-b','--barcodeFile', help='a file (potentially gzipped) file containing comma separated sample names, first barcode and second barcode (with no header and no commas in the sample names)',type=helper.checkFile,required=True)
+    parser.add_argument('-b','--barcodeFile', help='a (potentially gzipped) file containing comma separated sample names, first barcode and second barcode (with no header and no commas in the sample names)',type=helper.checkFile,required=True)
     parser.add_argument('-o','--outputPath', help='a string giving the desired output directory',type=helper.checkDir,default='.')
 
     args=parser.parse_args(argv)
