@@ -80,6 +80,7 @@ def main(argv=None):
             if args.dots>0:
                 if fastqIter.nGood % args.dots==0:
                     sys.stderr.write('.')
+                    sys.stderr.flush()
 
         if args.dots>0:
             sys.stderr.write("\nGood reads: "+str(fastqIter.nGood)+" Bad reads: "+str(fastqIter.nBad)+"\n")
