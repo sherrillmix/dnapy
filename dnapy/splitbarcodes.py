@@ -83,7 +83,7 @@ def main(argv=None):
                     sys.stderr.flush()
 
         if args.dots>0:
-            sys.stderr.write("\nGood reads: "+str(fastqIter.nGood)+" Bad reads: "+str(fastqIter.nBad)+"\n")
+            sys.stderr.write("\nReads assigned to barcode: "+str(fastqIter.nGood)+" Unassigned reads: "+str(fastqIter.nBad)+"\n")
 
     for key in outHandles:
         helper.closeFiles(outHandles[key])

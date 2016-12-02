@@ -66,13 +66,13 @@ def test_main(capsys,tmpdir):
         splitbarcodes.main([str(p1),'-i',str(p1),str(p1),'-b',str(b),'-o',str(d),'-d1'])
     splitbarcodes.main([str(p1),'-i',str(p1),'-b',str(b),'-o',str(d),'-d1'])
     out, err=capsys.readouterr()
-    for ii,jj in zip(err.split('\n'),['.','Good reads: 1 Bad reads: 2']):
+    for ii,jj in zip(err.split('\n'),['.','Reads assigned to barcode: 1 Unassigned reads: 2']):
         assert ii==jj
     for ii,jj in zip([x.rstrip('\n') for x in helper.openNormalOrGz(str(o)).readlines()],['@seq1','AAA','+seq1','(((']):
         assert ii==jj
     splitbarcodes.main([str(p1),str(p2),'-i',str(p1),'-b',str(b),'-o',str(d),'-d1'])
     out, err=capsys.readouterr()
-    for ii,jj in zip(err.split('\n'),['.','Good reads: 1 Bad reads: 2']):
+    for ii,jj in zip(err.split('\n'),['.','Reads assigned to barcode: 1 Unassigned reads: 2']):
         assert ii==jj
     for ii,jj in zip([x.rstrip('\n') for x in helper.openNormalOrGz(str(o)).readlines()],['@seq1','AAA','+seq1','(((']):
         assert ii==jj
@@ -85,7 +85,7 @@ def test_main(capsys,tmpdir):
     i2.write("@seq1z\nT\n+\n(\n@seq2z\nT\n+\n(\n@seq3\nTT\n+\n((\n")
     splitbarcodes.main([str(p1),str(p2),'-i',str(i1),str(i2),'-b',str(b),'-o',str(d),'-d1'])
     out, err=capsys.readouterr()
-    for ii,jj in zip(err.split('\n'),['..','Good reads: 2 Bad reads: 1']):
+    for ii,jj in zip(err.split('\n'),['..','Reads assigned to barcode: 2 Unassigned reads: 1']):
         assert ii==jj
     for ii,jj in zip([x.rstrip('\n') for x in helper.openNormalOrGz(str(o)).readlines()],['@seq1','AAA','+seq1','(((','@seq2','TT','+seq2','(A']):
         assert ii==jj
