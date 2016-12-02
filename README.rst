@@ -37,7 +37,7 @@ splitbarcodes
 ::
   
   usage: splitbarcodes [-h] [-i INDEXFILES [INDEXFILES ...]] [-d DOTS] -b
-                       BARCODEFILE [-o OUTPUTPATH]
+                       BARCODEFILE [-o OUTPUTPATH] [-u]
                        fastqFiles [fastqFiles ...]
   
   A program to take a list of barcodes and one or more fastq reads and one or
@@ -64,6 +64,10 @@ splitbarcodes
                           names)
     -o OUTPUTPATH, --outputPath OUTPUTPATH
                           a string giving the desired output directory
+    -u, --unassigned      if set then store unassigned reads to
+                          {outputPath}/__UNASSIGNED__R#.fastq.gz with their
+                          corresponding barcodes in
+                          {outputPath}/__UNASSIGNED__I#.fastq.gz
   
 getstartends
 ~~~~
