@@ -44,7 +44,7 @@ def main(argv=None):
             fastq=Bio.SeqIO.QualityIO.FastqGeneralIterator(fastqHandle)
             kmerCounts[ii]=countKmersInReads(fastq,args.kmerLength)
 
-    presentKmers=sorted(set(sum([xx.keys() for xx in kmerCounts],[])))
+    presentKmers=sorted(set(sum([list(xx.keys()) for xx in kmerCounts],[])))
 
     #allKmers=generateAllKmers(args.kmerLength)
     #print("file,%s" % ",".join(allKmers))
