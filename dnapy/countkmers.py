@@ -3,6 +3,7 @@ import collections
 from dnapy import helper
 import argparse
 import Bio.SeqIO.QualityIO
+import sys
 
 #make sure zip is iteratable
 try:
@@ -29,7 +30,6 @@ def countKmersInReads(reads,k=10):
             kmers[kmer]+=1
     return(kmers)
 
-
 def main(argv=None):
     parser = argparse.ArgumentParser(description="A program to take a fastq file(s) and count the total k-mers across all reads in each file. Note that partial kmers are discarded e.g. the last 3 reads of a 23 base read will be ignored. Return a comma separated file with a header row then a row for each file and a file column then a column for each kmer")
     parser.add_argument('fastqFiles', help='a fastq file(s) (potentially gzipped) containing the sequence reads',type=helper.checkFile,nargs='+')
@@ -40,6 +40,7 @@ def main(argv=None):
 
     kmerCounts=[[] for _ in range(nFiles)]
     for ii,fastqFile in zip(range(0,nFiles),args.fastqFiles):
+        sys.stderr.write('Working on file %s\n' % fastqFile)
         with helper.openNormalOrGz(fastqFile) as fastqHandle:
             fastq=Bio.SeqIO.QualityIO.FastqGeneralIterator(fastqHandle)
             kmerCounts[ii]=countKmersInReads(fastq,args.kmerLength)
