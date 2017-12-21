@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import collections
-import helper
+from dnapy import helper
 import argparse
 import Bio.SeqIO.QualityIO
 
