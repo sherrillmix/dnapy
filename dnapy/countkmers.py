@@ -1,0 +1,56 @@
+#!/usr/bin/env python
+import collections
+import helper
+import argparse
+import Bio.SeqIO.QualityIO
+
+#make sure zip is iteratable
+try:
+    from itertools import izip as zip
+except ImportError: # will be 3.x series
+    pass
+
+def splitIntoKmer(read,k=10,step=None):
+    if step is None: step=k
+    starts=range(0,len(read)-k+1,step)
+    return([read[start:start+k] for start in starts])
+
+def generateAllKmers(k=10,bases=['A','C','G','T']):
+    if k < 1: return([])
+    if k == 1: return bases
+    suffixs=generateAllKmers(k=k-1,bases=bases)
+    return([base+suffix for base in bases for suffix in suffixs])
+
+def countKmersInReads(reads,k=10):
+    kmers=collections.defaultdict(lambda:0)
+    for read in reads:
+        readKmers=splitIntoKmer(read[1],k)
+        for kmer in readKmers:
+            kmers[kmer]+=1
+    return(kmers)
+
+
+def main(argv=None):
+    parser = argparse.ArgumentParser(description="A program to take a fastq file(s) and count the total k-mers across all reads in each file. Note that partial kmers are discarded e.g. the last 3 reads of a 23 base read will be ignored. Return a comma separated file with a header row then a row for each file and a file column then a column for each kmer")
+    parser.add_argument('fastqFiles', help='a fastq file(s) (potentially gzipped) containing the sequence reads',type=helper.checkFile,nargs='+')
+    parser.add_argument('-k','--kmerLength', help='the lengh of kmer to be used. Be careful with values larger than 20.',default=10,type=int,)
+
+    args=parser.parse_args(argv)
+    nFiles=len(args.fastqFiles)
+
+    kmerCounts=[[] for _ in range(nFiles)]
+    for ii,fastqFile in zip(range(0,nFiles),args.fastqFiles):
+        with helper.openNormalOrGz(fastqFile) as fastqHandle:
+            fastq=Bio.SeqIO.QualityIO.FastqGeneralIterator(fastqHandle)
+            kmerCounts[ii]=countKmersInReads(fastq,args.kmerLength)
+
+    presentKmers=sorted(set(sum([xx.keys() for xx in kmerCounts],[])))
+
+    #allKmers=generateAllKmers(args.kmerLength)
+    #print("file,%s" % ",".join(allKmers))
+    print("kmer,%s" % ",".join(args.fastqFiles))
+    for kmer in presentKmers:
+        print("%s,%s" % (kmer,",".join([str(kmerCount[kmer]) for kmerCount in kmerCounts])))
+
+if __name__ == '__main__':
+    main(sys.argv[1:])

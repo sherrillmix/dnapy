@@ -78,4 +78,21 @@ def test_openGzOrNormal(tmpdir):
     for x,y in zip(gz,[x+'\n' for x in pred]):
         assert x==y
 
+def test_positive():
+    with pytest.raises(argparse.ArgumentTypeError):
+        helper.checkPositiveInt(0)
+    with pytest.raises(argparse.ArgumentTypeError):
+        helper.checkPositiveInt(-1)
+    with pytest.raises(argparse.ArgumentTypeError):
+        helper.checkPositiveInt(-9999)
+    with pytest.raises(argparse.ArgumentTypeError):
+        helper.checkPositiveInt(0.1)
+    with pytest.raises(argparse.ArgumentTypeError):
+        helper.checkPositiveInt(10,9)
+    assert helper.checkPositiveInt(1)==1
+    assert helper.checkPositiveInt("1")==1
+    assert helper.checkPositiveInt(1.3)==1
+    assert helper.checkPositiveInt(1.9)==1
+    assert helper.checkPositiveInt(21)==21
+    assert helper.checkPositiveInt(10,10)==10
 

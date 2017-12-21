@@ -34,7 +34,6 @@ def writeFastqRead(readFile,read):
     #out=out.encode('utf-8')
     readFile.write(out)
 
-
 def closeFiles(openFiles):
     try:
         iterator = openFiles.items()
@@ -54,3 +53,13 @@ def openNormalOrGz(gzFile,mode='r'):
         sys.stderr.write("Problem opening file:"+gzFile+"\n")
         raise
     return fastq
+
+def checkPositiveInt(value,maxVal=None):
+    ivalue=int(value)
+    if ivalue<=0:
+        raise argparse.ArgumentTypeError('%s is not a postive integer' % value)
+    if maxVal is not None:
+        if ivalue > maxVal: 
+            raise argparse.ArgumentTypeError('%s is not less than %d' % (value,maxVal))
+    return ivalue
+

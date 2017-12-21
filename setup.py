@@ -38,7 +38,8 @@ setup(name='dnapy',
         'removeshort = dnapy.removeshort:main',
         'removereads = dnapy.removereads:main',
         'getstartends = dnapy.getstartends:main',
-        'splitbarcodes = dnapy.splitbarcodes:main'
+        'splitbarcodes = dnapy.splitbarcodes:main',
+        'countkmers = dnapy.countkmers:main'
         ] },
     classifiers=[
         "Topic :: Scientific/Engineering :: Bio-Informatics",
