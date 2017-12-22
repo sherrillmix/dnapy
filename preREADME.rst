@@ -35,6 +35,11 @@ INSERT_USAGE_HERE
 
 Changelog
 ---------
+0.1.3 (2017-12-22)
+
+* Add kmer counter
+* Add option to filter reads containing N or unequal length sequence-qualities to removeshort
+
 0.1.2 (2016-10-25)
 
 * Add barcode splitter script
