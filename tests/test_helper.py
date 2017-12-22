@@ -18,6 +18,16 @@ def test_readSimpleCsv(tmpdir):
     with pytest.raises(ValueError):
         helper.readSimpleCsv(str(p))
 
+def test_readSimpleFastq():
+    for ii,jj in zip(helper.readSimpleFastq(iter(['@Read1','AAAT','+','1234','@Read2','AG','+','12'])),[['Read1','AAAT','1234'],['Read2','AG','12']]):
+        assert ii==jj
+    #poorly formed
+    for ii,jj in zip(helper.readSimpleFastq(iter(['@Read1','A','+','1234','@Read2','AG','+',''])),[['Read1','A','1234'],['Read2','AG','']]):
+        assert ii==jj
+    #incomplete file
+    for ii,jj in zip(helper.readSimpleFastq(iter(['@Read1','A','+','1234','@Read2','AG','+','','@Read3','ZZ','+asdas'])),[['Read1','A','1234'],['Read2','AG','']]):
+        assert ii==jj
+
 def test_checkFile(tmpdir):
     d = tmpdir.mkdir('dir')
     p = d.join('test.txt')

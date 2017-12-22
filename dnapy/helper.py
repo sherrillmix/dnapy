@@ -11,6 +11,16 @@ def readSimpleCsv(csvFile):
         raise ValueError('All rows do not have same numbers of entries in '+csvFile)
     return splits
 
+def readSimpleFastq(fileHandle):
+    while True:
+        try:
+            seq=[next(fileHandle).strip() for _ in range(4)]
+            del(seq[2])
+            seq[0]=seq[0][1:]
+            yield seq
+        except StopIteration:
+            raise
+
 def checkFile(targetFile):
     if not os.path.isfile(targetFile):
         raise argparse.ArgumentTypeError(targetFile+' is not a file')

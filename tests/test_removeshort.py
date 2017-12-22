@@ -32,7 +32,32 @@ def test_main(capsys,tmpdir):
     out, err=capsys.readouterr()
     for ii,jj in zip(err.split('\n'),['..','Good reads: 2 Bad reads: 1']):
         assert ii==jj
-    print(out)
+    for ii,jj in zip(out.split('\n'),['@seq1','AAA','+seq1','(((','@seq2','TT','+seq2','((']):
+        assert ii==jj
+    p.write("@seq1\nAAA\n+\n(((\n@seq2\nTT\n+\n((\n@seq3\nT\n+\n(\n@seq4\nTTTTN\n+\n(((((")
+    removeshort.main([str(p),'-l 2','-d 1'])
+    out, err=capsys.readouterr()
+    for ii,jj in zip(err.split('\n'),['...','Good reads: 3 Bad reads: 1']):
+        assert ii==jj
+    for ii,jj in zip(out.split('\n'),['@seq1','AAA','+seq1','(((','@seq2','TT','+seq2','((','@seq4','TTTTN','+seq4','(((((']):
+        assert ii==jj
+    removeshort.main([str(p),'-l 2','-d 1','-n'])
+    out, err=capsys.readouterr()
+    for ii,jj in zip(err.split('\n'),['..','Good reads: 2 Bad reads: 2']):
+        assert ii==jj
+    for ii,jj in zip(out.split('\n'),['@seq1','AAA','+seq1','(((','@seq2','TT','+seq2','((']):
+        assert ii==jj
+    p.write("@seq1\nAAA\n+\n(((\n@seq2\nTT\n+\n((\n@seq3\nTTT\n+\n(\n@seq4\nTTTTN\n+\n(((((")
+    with pytest.raises(ValueError):
+        removeshort.main([str(p),'-l 2','-d 1'])
+    out, err=capsys.readouterr()
+    p.write("@seq1\nAAA\n+\n(((\n@seq2\nTT\n+\n((\n@seq3\nTTT\n+\n(\n@seq4\nTTTTN\n+\n(((((")
+    removeshort.main([str(p),'-l 2','-d 1','-p','-n'])
+    out, err=capsys.readouterr()
+    print out
+    print err
+    for ii,jj in zip(err.split('\n'),['..','Good reads: 2 Bad reads: 2']):
+        assert ii==jj
     for ii,jj in zip(out.split('\n'),['@seq1','AAA','+seq1','(((','@seq2','TT','+seq2','((']):
         assert ii==jj
 

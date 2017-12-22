@@ -128,7 +128,7 @@ removeshort
 
 ::
   
-  usage: removeshort [-h] [-d DOTS] [-l MINLENGTH] fastqFile
+  usage: removeshort [-h] [-d DOTS] [-l MINLENGTH] [-n] [-p] fastqFile
   
   A program to remove short reads from a fastq file.
   
@@ -142,6 +142,11 @@ removeshort
                           number to suppress output (default:-1)
     -l MINLENGTH, --minLength MINLENGTH
                           minimum length read to output (default:15)
+    -n, --removeN         remove reads which contain anything other than A, C, T
+                          or G
+    -p, --removePoor      remove reads with different length sequence and
+                          qualities. Note this requires assuming that all reads
+                          are 4 lines each
   
 countkmers
 ~~~~
