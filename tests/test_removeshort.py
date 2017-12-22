@@ -54,8 +54,6 @@ def test_main(capsys,tmpdir):
     p.write("@seq1\nAAA\n+\n(((\n@seq2\nTT\n+\n((\n@seq3\nTTT\n+\n(\n@seq4\nTTTTN\n+\n(((((")
     removeshort.main([str(p),'-l 2','-d 1','-p','-n'])
     out, err=capsys.readouterr()
-    print out
-    print err
     for ii,jj in zip(err.split('\n'),['..','Good reads: 2 Bad reads: 2']):
         assert ii==jj
     for ii,jj in zip(out.split('\n'),['@seq1','AAA','+seq1','(((','@seq2','TT','+seq2','((']):
