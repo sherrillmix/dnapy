@@ -109,5 +109,9 @@ def test_main(capsys,tmpdir):
     out, err=capsys.readouterr()
     for ii,jj in zip(out.split('\n'),['kmer,'+str(p1)+','+str(p3),'AAA,1,1','CCC,0,1']):
         assert ii==jj
+    countkmers.main([str(p1),str(p3),'-k3','-t3'])
+    out, err=capsys.readouterr()
+    for ii,jj in zip(out.split('\n'),['kmer,'+str(p1)+','+str(p3),'AAA,1,1','CCC,0,1']):
+        assert ii==jj
 
 

@@ -4,6 +4,7 @@ from dnapy import helper
 import argparse
 import Bio.SeqIO.QualityIO
 import sys
+import multiprocessing
 
 #make sure zip is iteratable
 try:
@@ -23,27 +24,37 @@ def generateAllKmers(k=10,bases=['A','C','G','T']):
     return([base+suffix for base in bases for suffix in suffixs])
 
 def countKmersInReads(reads,k=10):
-    kmers=collections.defaultdict(lambda:0)
+    kmers=collections.defaultdict(defaultVal)
     for read in reads:
         readKmers=splitIntoKmer(read[1],k)
         for kmer in readKmers:
             kmers[kmer]+=1
     return(kmers)
 
+def countKmersInFile(args):
+    fastqFile=args[0]
+    k=args[1]
+    sys.stderr.write('Working on file %s\n' % fastqFile)
+    with helper.openNormalOrGz(fastqFile) as fastqHandle:
+        fastq=Bio.SeqIO.QualityIO.FastqGeneralIterator(fastqHandle)
+        return(countKmersInReads(fastq,k))
+
+#can't use lambda or break pickel and multiprocess
+def defaultVal():
+    return 0
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description="A program to take a fastq file(s) and count the total k-mers across all reads in each file. Note that partial kmers are discarded e.g. the last 3 reads of a 23 base read will be ignored. Return a comma separated file with a header row then a row for each file and a file column then a column for each kmer")
     parser.add_argument('fastqFiles', help='a fastq file(s) (potentially gzipped) containing the sequence reads',type=helper.checkFile,nargs='+')
-    parser.add_argument('-k','--kmerLength', help='the lengh of kmer to be used. Be careful with values larger than 20.',default=10,type=int,)
+    parser.add_argument('-k','--kmerLength', help='the lengh of kmer to be used. Be careful with values larger than 20.',default=10,type=helper.checkPositiveInt)
+    parser.add_argument('-t','--nThreads', help='the number of threadss to use for processing. Should be less than or equal the number of threads on computer.',default=1,type=helper.checkPositiveInt)
 
     args=parser.parse_args(argv)
     nFiles=len(args.fastqFiles)
 
-    kmerCounts=[[] for _ in range(nFiles)]
-    for ii,fastqFile in zip(range(0,nFiles),args.fastqFiles):
-        sys.stderr.write('Working on file %s\n' % fastqFile)
-        with helper.openNormalOrGz(fastqFile) as fastqHandle:
-            fastq=Bio.SeqIO.QualityIO.FastqGeneralIterator(fastqHandle)
-            kmerCounts[ii]=countKmersInReads(fastq,args.kmerLength)
+    #kmerCounts=[[] for _ in range(nFiles)]
+    p=multiprocessing.Pool(args.nThreads)
+    kmerCounts=p.map(countKmersInFile,zip(args.fastqFiles,[args.kmerLength]*nFiles))
 
     presentKmers=sorted(set(sum([list(xx.keys()) for xx in kmerCounts],[])))
 

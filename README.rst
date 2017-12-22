@@ -153,7 +153,8 @@ countkmers
 
 ::
   
-  usage: countkmers [-h] [-k KMERLENGTH] fastqFiles [fastqFiles ...]
+  usage: countkmers [-h] [-k KMERLENGTH] [-t NTHREADS]
+                    fastqFiles [fastqFiles ...]
   
   A program to take a fastq file(s) and count the total k-mers across all reads
   in each file. Note that partial kmers are discarded e.g. the last 3 reads of a
@@ -169,6 +170,10 @@ countkmers
     -k KMERLENGTH, --kmerLength KMERLENGTH
                           the lengh of kmer to be used. Be careful with values
                           larger than 20.
+    -t NTHREADS, --nThreads NTHREADS
+                          the number of threadss to use for processing. Should
+                          be less than or equal the number of threads on
+                          computer.
   
 getstartends
 ~~~~
