@@ -42,6 +42,15 @@ def test_checkFile(tmpdir):
     os.chmod(str(p),os.stat(str(p)).st_mode & ~stat.S_IREAD)
     with pytest.raises(argparse.ArgumentTypeError):
         helper.checkFile(str(p))
+    #check pipe
+    p= d.join('test.pipe')
+    with pytest.raises(argparse.ArgumentTypeError):
+        helper.checkFile(str(d))
+    os.mkfifo(str(p))
+    with pytest.raises(argparse.ArgumentTypeError):
+        helper.checkFile(str(p),False)
+    assert(helper.checkFile(str(p),True))==str(p)
+    assert(helper.checkFile(str(p)))==str(p)
 
 def test_closeFiles(tmpdir):
     d = tmpdir.mkdir('dir')

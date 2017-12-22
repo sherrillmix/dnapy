@@ -2,6 +2,7 @@ import os
 import argparse
 import gzip
 import sys
+import stat
 
 def readSimpleCsv(csvFile):
     lines=[line.strip() for line in openNormalOrGz(csvFile)]
@@ -21,9 +22,12 @@ def readSimpleFastq(fileHandle):
         except StopIteration:
             raise
 
-def checkFile(targetFile):
+def checkFile(targetFile,orPipe=True):
+    if not os.path.exists(targetFile):
+            raise argparse.ArgumentTypeError(targetFile+' does not exist')
     if not os.path.isfile(targetFile):
-        raise argparse.ArgumentTypeError(targetFile+' is not a file')
+        if not orPipe or not stat.S_ISFIFO(os.stat(targetFile).st_mode):
+            raise argparse.ArgumentTypeError(targetFile+' is not a file')
     if os.access(targetFile, os.R_OK):
         return targetFile
     else:
