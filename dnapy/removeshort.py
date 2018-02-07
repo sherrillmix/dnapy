@@ -49,7 +49,7 @@ class shortFilterFastqIter:
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description="A program to remove short reads from a fastq file.")
-    parser.add_argument('fastqFile', help='a (potentially gzipped) fastq file containing the alignment',type=helper.checkFile)
+    parser.add_argument('fastqFile', help='a (potentially gzipped) fastq file containing the sequence data',type=helper.checkFile)
     parser.add_argument("-d","--dots", help="output dot to stderr every X reads. Input a negative number to suppress output (default:-1)", default=-1,type=int)
     parser.add_argument("-l","--minLength", help="minimum length read to output (default:15)",default=15,type=int)
     parser.add_argument("-n","--removeN", help="remove reads which contain anything other than A, C, T or G",action='store_true')

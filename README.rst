@@ -134,7 +134,7 @@ removeshort
   
   positional arguments:
     fastqFile             a (potentially gzipped) fastq file containing the
-                          alignment
+                          sequence data
   
   optional arguments:
     -h, --help            show this help message and exit
