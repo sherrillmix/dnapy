@@ -128,7 +128,8 @@ removeshort
 
 ::
   
-  usage: removeshort [-h] [-d DOTS] [-l MINLENGTH] [-n] [-p] fastqFile
+  usage: removeshort [-h] [-d DOTS] [-l MINLENGTH] [-n] [-p] [-b BADOUT]
+                     fastqFile
   
   A program to remove short reads from a fastq file.
   
@@ -147,6 +148,11 @@ removeshort
     -p, --removePoor      remove reads with different length sequence and
                           qualities. Note this requires assuming that all reads
                           are 4 lines each
+    -b BADOUT, --badOut BADOUT
+                          a file path in which to save the first 10000 malformed
+                          reads with different length sequence and qualities.
+                          Note this requires assuming that all reads are 4 lines
+                          each
   
 countkmers
 ~~~~

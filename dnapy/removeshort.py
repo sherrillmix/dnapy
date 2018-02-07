@@ -23,6 +23,7 @@ class shortFilterFastqIter:
         else:
             self.fastq=Bio.SeqIO.QualityIO.FastqGeneralIterator(self.fastqHandle)
         self.nSearch=re.compile('[^ACTG]').search
+        self.badList=[]
     
     def __enter__(self):
         return self
@@ -43,6 +44,9 @@ class shortFilterFastqIter:
                     if not self.suppressBad or len(currentRead[1])==len(currentRead[2]):
                         self.nGood+=1
                         return currentRead
+                    else:
+                        if len(self.badList)<10000:
+                            self.badList.append(currentRead)
             self.nBad+=1
         raise StopIteration()
 
@@ -54,6 +58,7 @@ def main(argv=None):
     parser.add_argument("-l","--minLength", help="minimum length read to output (default:15)",default=15,type=int)
     parser.add_argument("-n","--removeN", help="remove reads which contain anything other than A, C, T or G",action='store_true')
     parser.add_argument("-p","--removePoor", help="remove reads with different length sequence and qualities.  Note this requires assuming that all reads are 4 lines each",action='store_true')
+    parser.add_argument("-b","--badOut", help="a file path in which to save the first 10000 malformed reads with different length sequence and qualities. Note this requires assuming that all reads are 4 lines each",type=argparse.FileType('w'),default=None)
     args=parser.parse_args(argv)
  
 
@@ -64,6 +69,11 @@ def main(argv=None):
                 if fastqIter.nGood % args.dots==0:
                     sys.stderr.write('.')
                     sys.stderr.flush()
+
+        if args.badOut is not None:
+            for currentRead in fastqIter.badList:
+                helper.writeFastqRead(args.badOut,currentRead)
+            args.badOut.close()
 
         if args.dots>0:
             sys.stderr.write("\nGood reads: "+str(fastqIter.nGood)+" Bad reads: "+str(fastqIter.nBad)+"\n")

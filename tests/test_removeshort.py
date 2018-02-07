@@ -1,5 +1,6 @@
 import pytest
 from dnapy import removeshort
+from dnapy import helper
 import os
 import stat
 import pysam
@@ -51,13 +52,17 @@ def test_main(capsys,tmpdir):
     with pytest.raises(ValueError):
         removeshort.main([str(p),'-l 2','-d 1'])
     out, err=capsys.readouterr()
-    p.write("@seq1\nAAA\n+\n(((\n@seq2\nTT\n+\n((\n@seq3\nTTT\n+\n(\n@seq4\nTTTTN\n+\n(((((")
+    p.write("@seq1\nAAA\n+\n(((\n@seq2\nTT\n+\n((\n@seq3\nTTT\n+\n(\n@seq4\nTTTTN\n+\n(((((\n@seq5\nAA\n+\n(((")
     removeshort.main([str(p),'-l 2','-d 1','-p','-n'])
     out, err=capsys.readouterr()
-    for ii,jj in zip(err.split('\n'),['..','Good reads: 2 Bad reads: 2']):
+    for ii,jj in zip(err.split('\n'),['..','Good reads: 2 Bad reads: 3']):
         assert ii==jj
     for ii,jj in zip(out.split('\n'),['@seq1','AAA','+seq1','(((','@seq2','TT','+seq2','((']):
         assert ii==jj
-
+    badf=d.join('bad.fastq')
+    removeshort.main([str(p),'-l 2','-d 1','-p','-n','-b',str(badf)])
+    with open(str(badf)) as badh:
+        for ii,jj in zip(badh.read().splitlines(),['@seq3','TTT','+seq3','(','@seq5','AA','+seq5','(((']):
+            assert ii==jj
 
 
