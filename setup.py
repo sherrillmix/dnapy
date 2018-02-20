@@ -30,7 +30,7 @@ setup(name='dnapy',
     license='GPL 3',
     packages=find_packages(),
     zip_safe=True,
-    install_requires=['pysam >= 0.13','biopython'],
+    install_requires=['pysam >= 0.14','biopython'],
     tests_require=['pytest >=2.8'],
     cmdclass = {'test': PyTest},
     entry_points={ 'console_scripts': [
