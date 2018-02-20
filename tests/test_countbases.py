@@ -87,7 +87,6 @@ def test_goodFiles(tmpdir,bamFile):
         if count==0:
             assert col['+']['A']+col['+']['G']+col['+']['T']+col['+']['C']==0
         elif count<5 and count>0:
-            print col
             assert col['+']['A']==1
             assert col['+']['G']+col['+']['T']+col['+']['C']==0
         else:
