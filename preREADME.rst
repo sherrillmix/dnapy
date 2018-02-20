@@ -27,6 +27,14 @@ and run `setup.py` from the resulting directory (the `--user` installs it locall
   python setup.py install --user
   python setup.py test
 
+To use the scripts directly from command line, e.g. `countbases file.bam`, (and to pass all tests above), you will need to make sure that your PATH contains the bin directory installed above. On Linux, this would mean putting something like::
+
+   if [ -d "$HOME/.local/bin" ] ; then
+       PATH="$HOME/.local/bin:$PATH"
+   fi
+
+in your `.bashrc` or `.profile`.
+
 Usage
 -----
 The package provides the scripts:
