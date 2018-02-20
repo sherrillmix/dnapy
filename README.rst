@@ -216,6 +216,7 @@ getstartends
 Changelog
 ---------
 0.1.4 (2018-02-20)
+
 * Adjust to changes in pysam v1.4
 * Add option to only count bases with a quality greater above a specified limit
 
