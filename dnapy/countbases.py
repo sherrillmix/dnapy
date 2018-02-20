@@ -8,11 +8,11 @@ from dnapy import helper
 
 MAX_DEPTH=1e9
 
-def countBasesInFile(inputFile,region=None):
+def countBasesInFile(inputFile,region=None,minQuality=0):
     with pysam.AlignmentFile(inputFile, "rb" ) as samfile:
         #print(samfile.pileup(region=region))
         for pileupcolumn in samfile.pileup(region=region,max_depth=MAX_DEPTH):
-            #print ("coverage at base %s = %s" % (pileupcolumn.pos, pileupcolumn.n))
+            pileupcolumn.set_min_base_quality(minQuality)
             counts={'+':collections.defaultdict(lambda:0),'-':collections.defaultdict(lambda:0)}
             for pileupread in pileupcolumn.pileups:
                 if not pileupread.is_del and not pileupread.is_refskip:
@@ -20,7 +20,7 @@ def countBasesInFile(inputFile,region=None):
                     thisStrand='-' if pileupread.alignment.is_reverse else '+'
                     counts[thisStrand][thisBase]+=1
                     #counts[thisBase]+=1
-            yield {"ref": pileupcolumn.reference_name, "pos": pileupcolumn.pos, "n": pileupcolumn.n, "+": counts['+'], "-": counts['-']}
+            yield {"ref": samfile.get_reference_name(pileupcolumn.reference_id), "pos": pileupcolumn.pos, "n": pileupcolumn.n, "+": counts['+'], "-": counts['-']}
 
 
 
@@ -35,6 +35,7 @@ def main(argv=None):
     parser.add_argument("-v","--verbose", help="increase output verbosity to stderr", action="store_true")
     parser.add_argument("-r","--region", help="the region to count in",default=None)
     parser.add_argument("-s","--strand", help="break base counts into positive and negative strand alignments", action="store_true")
+    parser.add_argument("-q","--minQuality", help="don't count bases with a quality less than this", type=int,default=0)
     args=parser.parse_args(argv)
         
     if args.verbose:
@@ -48,7 +49,7 @@ def main(argv=None):
     else:
         header+=','.join(bases)
     print(header)
-    for column in countBasesInFile(args.bamFile,args.region):
+    for column in countBasesInFile(args.bamFile,args.region,args.minQuality):
         if args.strand:
             counts=[column[strand][base] for base in bases for strand in strands]
         else: 

@@ -22,7 +22,7 @@ class PyTest(TestCommand):
         sys.exit(errno)
 
 setup(name='dnapy',
-    version='0.1.3',
+    version='0.1.4',
     description='Some handy functions for dealing with sequence alignment files.',
     url='http://github.com/sherrillmix/dnapy',
     author='Scott Sherrill-Mix',
@@ -30,7 +30,7 @@ setup(name='dnapy',
     license='GPL 3',
     packages=find_packages(),
     zip_safe=True,
-    install_requires=['pysam >= 0.8.4','biopython'],
+    install_requires=['pysam >= 0.1.3','biopython'],
     tests_require=['pytest >=2.8'],
     cmdclass = {'test': PyTest},
     entry_points={ 'console_scripts': [

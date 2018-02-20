@@ -8,7 +8,7 @@ import subprocess
 def test_badFiles(tmpdir):
     d = tmpdir.mkdir('dir')
     p = d.join('test.txt')
-    with pytest.raises(ValueError):
+    with pytest.raises(IOError):
         next(getstartends.getStartsInFile(str(d)))
     #doesn't exist yet
     with pytest.raises(IOError):
@@ -19,7 +19,7 @@ def test_badFiles(tmpdir):
         next(getstartends.getStartsInFile(str(p)))
     #make unreadable
     os.chmod(str(p),os.stat(str(p)).st_mode & ~stat.S_IREAD)
-    with pytest.raises(ValueError):
+    with pytest.raises(IOError):
         next(getstartends.getStartsInFile(str(p)))
 
 #something about capsys messes up pysam.index so create ahead of time for testing main

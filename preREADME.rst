@@ -35,6 +35,10 @@ INSERT_USAGE_HERE
 
 Changelog
 ---------
+0.1.4 (2018-02-20)
+* Adjust to changes in pysam v1.4
+* Add option to only count bases with a quality greater above a specified limit
+
 0.1.3 (2017-12-22)
 
 * Add kmer counter

@@ -8,7 +8,7 @@ import subprocess
 def test_badFiles(tmpdir):
     d = tmpdir.mkdir('dir')
     p = d.join('test.txt')
-    with pytest.raises(ValueError):
+    with pytest.raises(IOError):
         next(countbases.countBasesInFile(str(d)))
     #doesn't exist yet
     with pytest.raises(IOError):
@@ -19,7 +19,7 @@ def test_badFiles(tmpdir):
         next(countbases.countBasesInFile(str(p)))
     #make unreadable
     os.chmod(str(p),os.stat(str(p)).st_mode & ~stat.S_IREAD)
-    with pytest.raises(ValueError):
+    with pytest.raises(IOError):
         next(countbases.countBasesInFile(str(p)))
 
 #something about capsys messes up pysam.index so create ahead of time for testing main
@@ -64,7 +64,8 @@ def test_goodFiles(tmpdir,bamFile):
     a.reference_start = 32
     a.mapping_quality = 20
     a.cigar = ((0,10), )
-    #a.query_qualities = pysam.qualitystring_to_array("((((((((((")
+    #0,2,39,39,...
+    a.query_qualities = pysam.qualitystring_to_array("!#HHHHHHHH")
     outFile.write(a)
     outFile.close()
     pysam.index(str(p))
@@ -80,6 +81,22 @@ def test_goodFiles(tmpdir,bamFile):
             assert col['n']==1
         assert col['pos']==count+32
         count+=1
+
+    count=0
+    for col in countbases.countBasesInFile(str(p),minQuality=2):
+        if count==0:
+            assert col['+']['A']+col['+']['G']+col['+']['T']+col['+']['C']==0
+        elif count<5 and count>0:
+            print col
+            assert col['+']['A']==1
+            assert col['+']['G']+col['+']['T']+col['+']['C']==0
+        else:
+            assert col['+']['T']==1
+            assert col['+']['G']+col['+']['A']+col['+']['C']==0
+        assert col['n']==1
+        assert col['pos']==count+32
+        count+=1
+
 
     bases=['A','C','G','T']
     strands=['+','-']

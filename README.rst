@@ -105,7 +105,7 @@ countbases
 
 ::
   
-  usage: countbases [-h] [-v] [-r REGION] [-s] bamFile
+  usage: countbases [-h] [-v] [-r REGION] [-s] [-q MINQUALITY] bamFile
   
   A program to count the number of bases at each position in a region. The
   command generates standard output with columns referenceName, position,
@@ -122,6 +122,8 @@ countbases
                           the region to count in
     -s, --strand          break base counts into positive and negative strand
                           alignments
+    -q MINQUALITY, --minQuality MINQUALITY
+                          don't count bases with a quality less than this
   
 removeshort
 ~~~~
@@ -213,6 +215,10 @@ getstartends
 
 Changelog
 ---------
+0.1.4 (2018-02-20)
+* Adjust to changes in pysam v1.4
+* Add option to only count bases with a quality greater above a specified limit
+
 0.1.3 (2017-12-22)
 
 * Add kmer counter
