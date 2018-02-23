@@ -27,8 +27,6 @@ def countBasesInFile(inputFile,region=None,minQuality=0):
 def main(argv=None):
     bases=['A','C','G','T']
     strands=['+','-']
-    if argv is None:
-        argv=sys.argv[1:]
 
     parser = argparse.ArgumentParser(description="A program to count the number of bases at each position in a region. The command generates standard output with columns referenceName, position, numberOfReads, and numbers of A, C, G, T (or A+, A-, C+, C-, G+, G-, T+, T- if --strand).")
     parser.add_argument('bamFile', help='a bam file containing the alignment',type=helper.checkFile)

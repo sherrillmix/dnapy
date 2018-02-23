@@ -17,9 +17,6 @@ def getStartsInFile(inputFile,region=None,maxGaps=0):
 
 
 def main(argv=None):
-    if argv is None:
-        argv=sys.argv[1:]
-
     parser = argparse.ArgumentParser(description="A program to pull start and end positions in a region. The command generates standard output with columns referenceName, start (1-based), end (1-based), strand ")
     parser.add_argument('bamFile', help='a bam file containing the alignment',type=helper.checkFile)
     parser.add_argument("-v","--verbose", help="increase output verbosity to stderr", action="store_true")
