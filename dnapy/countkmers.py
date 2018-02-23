@@ -65,4 +65,4 @@ def main(argv=None):
         print("%s,%s" % (kmer,",".join([str(kmerCount[kmer]) for kmerCount in kmerCounts])))
 
 if __name__ == '__main__':
-    main(sys.argv[1:])
+    main()
