@@ -22,6 +22,22 @@ def readSimpleFastq(fileHandle):
         except StopIteration:
             raise
 
+def readSimpleFasta(fileHandle):
+    sequences=[]
+    name=''
+    seq=''
+    for line in fileHandle:
+        if line.startswith('>'):
+            if name != '' or seq != '':
+                sequences.append([name,seq])
+            name=line[1:].strip()
+            seq=''
+        else:
+            seq+=line.strip()
+    if name != '' or seq != '':
+        sequences.append([name,seq])
+    return sequences
+
 def checkFile(targetFile,orPipe=True):
     if not os.path.exists(targetFile):
             raise argparse.ArgumentTypeError(targetFile+' does not exist')

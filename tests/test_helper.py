@@ -115,3 +115,14 @@ def test_positive():
     assert helper.checkPositiveInt(21)==21
     assert helper.checkPositiveInt(10,10)==10
 
+def test_readSimpleFasta():
+    for ii,jj in zip(helper.readSimpleFasta(iter(['>Read1','AAAT','>Read2','AG'])),[['Read1','AAAT'],['Read2','AG']]):
+        assert ii==jj
+    #final empty are skipped and white space is trimmed. Initial sequence is assigned to unnamed sequence. > not at start is treated as seq.
+    for ii,jj in zip(helper.readSimpleFasta(iter(['C','G+->@','>Read1','A  ','>Read2','>Read3','   AC   ','>','','','','','   '])),[['','CG+->@'],['Read1','A'],['Read2',''],['Read3','AC']]):
+        assert ii==jj
+    #sequence can span multiple lines. Final empty sequence
+    for ii,jj in zip(helper.readSimpleFasta(iter(['>Read1','A','AG','Z','Z','>','ZZ','>Read X Y Z > 1'])),[['Read1','AAGZZ'],['','ZZ'],['Read X Y Z > 1','']]):
+        assert ii==jj
+
+
