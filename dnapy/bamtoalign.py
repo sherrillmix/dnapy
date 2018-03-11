@@ -5,7 +5,7 @@ from dnapy import helper
 
 
 
-def getAlignsInFile(inputFile,region=None,minQuality=0):
+def getAlignsInFile(inputFile,region=None,minQuality=0,endspan=0):
     with pysam.AlignmentFile(inputFile, "rb" ) as samfile:
         for read in samfile.fetch(region=region):
             if read.cigartuples is None or read.mapping_quality<minQuality:
@@ -16,7 +16,19 @@ def getAlignsInFile(inputFile,region=None,minQuality=0):
             qPos=0
             seq=''
             insertions=[]
-            for operation,length in read.cigartuples:
+            cigarOps=[[operation,length] for operation, length in read.cigartuples]
+            if endspan>0:
+                for ii in range(len(cigarOps)-1,-1,-1):
+                    if cigarOps[ii][0] in [0,7,8]:
+                        if cigarOps[ii][1]>endspan:
+                            break
+                        cigarOps[ii][0]=4
+                for ii in range(0,len(cigarOps)):
+                    if cigarOps[ii][0] in [0,7,8]:
+                        if cigarOps[ii][1]>endspan:
+                            break
+                        cigarOps[ii][0]=4
+            for operation,length in cigarOps:
                 if operation in [0,7,8]:
                     seq+=read.query_sequence[qPos:(qPos+length)]
                 if operation in [2,3]:
@@ -92,7 +104,7 @@ def main(argv=None):
         ref,args.region=getRefFromFasta(fasta,args.region)
 
     nRead=0
-    aligns=[read for read in getAlignsInFile(args.bamFile,args.region,args.minQuality)]
+    aligns=[read for read in getAlignsInFile(args.bamFile,args.region,args.minQuality,args.endspan)]
     inserts=[[insertion[0],len(insertion[1])] for align in aligns if len(align['insertions'])>0 for insertion in align['insertions'] ]
     maxInserts={}
     for pos,length in inserts:
