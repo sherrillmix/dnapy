@@ -35,10 +35,14 @@ def getAlignsInFile(inputFile,region=None,minQuality=0):
 
 def padRead(seq,start,end,readInserts=None,refInserts=None):
     complete='-'*start+seq+'-'*(end-len(seq)-start)
+    if len(seq)+start>end: raise IndexError('Start position plus read length greater than end')
     if refInserts is None: return complete
     inserts={pos: ['-']*length for (pos,length) in refInserts.iteritems()}
-    for pos,seq in readInserts:
-        inserts[pos][0:len(seq)]=seq
+    if readInserts is not None:
+        for pos,seq in readInserts:
+            if pos not in inserts: raise IndexError('Read insert not in total ref inserts')
+            if len(seq)>len(inserts[pos]): raise IndexError('Read insert longer than ref insert')
+            inserts[pos][0:len(seq)]=seq
     sortInserts=[(pos,''.join(seqArray)) for (pos,seqArray) in inserts.iteritems()]
     sortInserts.sort(key=lambda x: x[0])
     splitPos=[xx[0] for xx in sortInserts]
