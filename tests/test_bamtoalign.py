@@ -29,6 +29,10 @@ def test_getRefFromFasta():
     assert seq[1]=='AAAACCCCTTTTGGGG'
     with pytest.raises(ImportError):
         bamtoalign.getRefFromFasta([['Test','AAAACCCCTTTTGGGG'],['Test2','ACACA']])
+    with pytest.raises(ImportError):
+        bamtoalign.getRefFromFasta([['Test1','AAAACCCCTTTTGGGG'],['Test2','ACACA']],'Test')
+    with pytest.raises(ImportError):
+        bamtoalign.getRefFromFasta([['Test','AAAACCCCTTTTGGGG'],['Test','ACACA']],'Test')
     seq=bamtoalign.getRefFromFasta([['Test','AAAACCCCTTTTGGGG'],['Test2','ACACA']],'Test')
     assert seq[0]=='Test'
     assert seq[1]=='AAAACCCCTTTTGGGG'
@@ -54,12 +58,13 @@ def bamFile(tmpdir_factory):
     a.query_name = "read2"
     a.reference_start = 32
     a.query_sequence="AAAAATTTTT"
-    a.cigar = ((1,1),(0,8),(1,1))
+    a.cigar = ((1,1),(2,2),(0,8),(1,1))
     a.flag=0
     outFile.write(a)
+    a.mapping_quality = 19
     a.query_name = "read1"
-    a.query_sequence="TTCCAAAAACCCCCGGC"
-    a.cigar = ((5,5),(4,2),(1,2),(0,9),(8,1), (2,1),(3,1),(7,1),(1,1),(0,1))
+    a.query_sequence="TTCCAAAAACCCCCGGCC"
+    a.cigar = ((5,5),(4,2),(1,2),(0,9),(8,1), (2,1),(3,1),(7,1),(1,1),(0,2))
     outFile.write(a)
     outFile.close()
     pysam.index(str(p))
@@ -70,13 +75,33 @@ def bamFile(tmpdir_factory):
 def test_getAlignsInFile(tmpdir,bamFile):
     for xx,yy in zip(bamtoalign.getAlignsInFile(str(bamFile)),[
         {'name':'read3','start':28,'seq':'GGGGAAAAAT','strand':'-','insertions':[]},
-        {'name': 'read2', 'start': 32, 'insertions': [[32,'A'],[40,'T']], 'strand': '+', 'seq': 'AAAATTTT'},
-        {'name': 'read1', 'start': 32, 'insertions': [[32,'CC'],[45,'G']], 'strand': '+', 'seq': 'AAAAACCCCC--GC'}
+        {'name': 'read2', 'start': 32, 'insertions': [[32,'A'],[42,'T']], 'strand': '+', 'seq': '--AAAATTTT'},
+        {'name': 'read1', 'start': 32, 'insertions': [[32,'CC'],[45,'G']], 'strand': '+', 'seq': 'AAAAACCCCC--GCC'}
+    ]):
+        print xx
+        assert xx==yy
+    for xx,yy in zip(bamtoalign.getAlignsInFile(str(bamFile),endspan=1),[
+        {'name':'read3','start':28,'seq':'GGGGAAAAAT','strand':'-','insertions':[]},
+        {'name': 'read2', 'start': 32, 'insertions': [], 'strand': '+', 'seq': 'AAAATTTT'},
+        {'name': 'read1', 'start': 32, 'insertions': [[45,'G']], 'strand': '+', 'seq': 'AAAAACCCCC--GCC'}
     ]):
         assert xx==yy
+    for xx,yy in zip(bamtoalign.getAlignsInFile(str(bamFile),endspan=2),[
+        {'name':'read3','start':28,'seq':'GGGGAAAAAT','strand':'-','insertions':[]},
+        {'name': 'read2', 'start': 32, 'insertions': [], 'strand': '+', 'seq': 'AAAATTTT'},
+        {'name': 'read1', 'start': 32, 'insertions': [], 'strand': '+', 'seq': 'AAAAACCCC'}
+    ]):
+        assert xx==yy
+
     for xx,yy in zip(bamtoalign.getAlignsInFile(str(bamFile),'ref:28'),[{'name':'read3','start':28,'seq':'GGGGAAAAAT','strand':'-','insertions':[]}]):
         assert xx==yy
+    for xx,yy in zip(bamtoalign.getAlignsInFile(str(bamFile),minQuality=20),[
+        {'name':'read3','start':28,'seq':'GGGGAAAAAT','strand':'-','insertions':[]},
+        {'name': 'read2', 'start': 32, 'insertions': [[32,'A'],[42,'T']], 'strand': '+', 'seq': '--AAAATTTT'}
+    ]):
+        assert xx==yy
     assert len([xx for xx in bamtoalign.getAlignsInFile(str(bamFile),'ref:900')])==0
+    assert len([xx for xx in bamtoalign.getAlignsInFile(str(bamFile),minQuality=21)])==0
     with pytest.raises(ValueError):
         [xx for xx in bamtoalign.getAlignsInFile(str(bamFile),'notRealRef:1')]
 
@@ -98,10 +123,10 @@ def test_main(capsys,tmpdir,bamFile):
     out, err=capsys.readouterr()
     assert 'Arguments' in err
     for ii,jj in zip(out.split('\n'),[
-        '>ref',  'AAAAAAAAAATTTTTTTTTTCCCCCCCCCCGG--GGGGGGGG-AAAAA-AAAAA',
+        '>ref',  'AAAAAAAAAATTTTTTTTTTCCCCCCCCCCGG--GGGGGGGGAA-AAA-AAAAA',
         '>read3','----------------------------GGGG--AAAAAT--------------',
-        '>read2','--------------------------------A-AAAATTTTT-----------',
-        '>read1','--------------------------------CCAAAAACCC-CC--GGC----'
+        '>read2','--------------------------------A---AAAATTTTT---------',
+        '>read1','--------------------------------CCAAAAACCCCC---GGCC---'
     ]):
         assert ii==jj
 
