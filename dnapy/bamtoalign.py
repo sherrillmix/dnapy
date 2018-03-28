@@ -20,15 +20,22 @@ def getAlignsInFile(inputFile,region=None,minQuality=0,endspan=0):
             cigarOps=[[operation,length] for operation, length in read.cigartuples]
             if endspan>0:
                 for ii in range(len(cigarOps)-1,-1,-1):
-                    if cigarOps[ii][0] in [0,7,8]:
-                        if cigarOps[ii][1]>endspan:
-                            break
-                        cigarOps[ii][0]=4
+                    if cigarOps[ii][0] in [0,7,8] and cigarOps[ii][1]>endspan:
+                        break
+                    if cigarOps[ii][0] in [0,1,7,8]: cigarOps[ii][0]=4
+                    #ignore final deletions (assuming padding 6 is ignored)
+                    if cigarOps[ii][0] in [2,3]: cigarOps[ii][0]=6
                 for ii in range(0,len(cigarOps)):
                     if cigarOps[ii][0] in [0,7,8]:
                         if cigarOps[ii][1]>endspan:
                             break
                         cigarOps[ii][0]=4
+                        tPos+=cigarOps[ii][1]
+                    if cigarOps[ii][0]==1: cigarOps[ii][0]=4
+                    #ignore start deletions (assuming padding 6 is ignored)
+                    if cigarOps[ii][0] in [2,3]:
+                        cigarOps[ii][0]=6
+                        tPos+=cigarOps[ii][1]
             for operation,length in cigarOps:
                 if operation in [0,7,8]:
                     seq+=read.query_sequence[qPos:(qPos+length)]
