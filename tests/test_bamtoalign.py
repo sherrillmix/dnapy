@@ -58,8 +58,8 @@ def bamFile(tmpdir_factory):
     a.flag=0
     outFile.write(a)
     a.query_name = "read1"
-    a.query_sequence="TTAAAAACCCCCGGC"
-    a.cigar = ((5,5),(4,2),(0,9),(8,1), (2,1),(3,1),(7,1),(1,1),(0,1))
+    a.query_sequence="TTCCAAAAACCCCCGGC"
+    a.cigar = ((5,5),(4,2),(1,2),(0,9),(8,1), (2,1),(3,1),(7,1),(1,1),(0,1))
     outFile.write(a)
     outFile.close()
     pysam.index(str(p))
@@ -71,7 +71,7 @@ def test_getAlignsInFile(tmpdir,bamFile):
     for xx,yy in zip(bamtoalign.getAlignsInFile(str(bamFile)),[
         {'name':'read3','start':28,'seq':'GGGGAAAAAT','strand':'-','insertions':[]},
         {'name': 'read2', 'start': 32, 'insertions': [[32,'A'],[40,'T']], 'strand': '+', 'seq': 'AAAATTTT'},
-        {'name': 'read1', 'start': 32, 'insertions': [[45,'G']], 'strand': '+', 'seq': 'AAAAACCCCC--GC'}
+        {'name': 'read1', 'start': 32, 'insertions': [[32,'CC'],[45,'G']], 'strand': '+', 'seq': 'AAAAACCCCC--GC'}
     ]):
         assert xx==yy
     for xx,yy in zip(bamtoalign.getAlignsInFile(str(bamFile),'ref:28'),[{'name':'read3','start':28,'seq':'GGGGAAAAAT','strand':'-','insertions':[]}]):
@@ -81,7 +81,7 @@ def test_getAlignsInFile(tmpdir,bamFile):
         [xx for xx in bamtoalign.getAlignsInFile(str(bamFile),'notRealRef:1')]
 
 
-def test_main(capsys,tmpdir):
+def test_main(capsys,tmpdir,bamFile):
     with pytest.raises(SystemExit):
         bamtoalign.main()
     out, err=capsys.readouterr()
@@ -90,4 +90,19 @@ def test_main(capsys,tmpdir):
         bamtoalign.main(['-h'])
     out, err=capsys.readouterr()
     assert 'usage' in out
+    d = tmpdir.mkdir('dir')
+    p = d.join('ref.fa')
+    with helper.openNormalOrGz(str(p),'w') as f:
+        f.write(">ref\nAAAAAAAAAATTTTTTTTTTCCCCCCCCCCGGGGGGGGGGAAAAAAAAAA")
+    bamtoalign.main(['-v','-s',str(p),str(bamFile)])
+    out, err=capsys.readouterr()
+    assert 'Arguments' in err
+    for ii,jj in zip(out.split('\n'),[
+        '>ref',  'AAAAAAAAAATTTTTTTTTTCCCCCCCCCCGG--GGGGGGGG-AAAAA-AAAAA',
+        '>read3','----------------------------GGGG--AAAAAT--------------',
+        '>read2','--------------------------------A-AAAATTTTT-----------',
+        '>read1','--------------------------------CCAAAAACCC-CC--GGC----'
+    ]):
+        assert ii==jj
+
 
