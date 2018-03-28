@@ -4,8 +4,26 @@ import sys
 from dnapy import helper
 
 
+#note that indels will be trimmed even if endSpan=0 if not surrounded by 1 match
+def trimCigar(cigarOps,endSpan,tPos=0,otherSide=True):
+    if(otherSide): 
+        cigarOps,_=trimCigar(cigarOps[::-1],endSpan,otherSide=False)
+        cigarOps=cigarOps[::-1]
+    for ii in range(0,len(cigarOps)):
+        if cigarOps[ii][0] in [0,7,8]:
+            if cigarOps[ii][1]>endSpan:
+                break
+            cigarOps[ii][0]=4
+            tPos+=cigarOps[ii][1]
+        if cigarOps[ii][0]==1: cigarOps[ii][0]=4
+        #ignore start deletions (assuming padding 6 is ignored)
+        if cigarOps[ii][0] in [2,3]:
+            cigarOps[ii][0]=6
+            tPos+=cigarOps[ii][1]
+    return [cigarOps,tPos]
 
-def getAlignsInFile(inputFile,region=None,minQuality=0,endspan=0):
+
+def getAlignsInFile(inputFile,region=None,minQuality=0,endSpan=0):
     with pysam.AlignmentFile(inputFile, "rb" ) as samfile:
         for read in samfile.fetch(region=region):
             if read.cigartuples is None or read.mapping_quality<minQuality:
@@ -18,24 +36,7 @@ def getAlignsInFile(inputFile,region=None,minQuality=0,endspan=0):
             insertions=[]
             #make tuples mutable
             cigarOps=[[operation,length] for operation, length in read.cigartuples]
-            if endspan>0:
-                for ii in range(len(cigarOps)-1,-1,-1):
-                    if cigarOps[ii][0] in [0,7,8] and cigarOps[ii][1]>endspan:
-                        break
-                    if cigarOps[ii][0] in [0,1,7,8]: cigarOps[ii][0]=4
-                    #ignore final deletions (assuming padding 6 is ignored)
-                    if cigarOps[ii][0] in [2,3]: cigarOps[ii][0]=6
-                for ii in range(0,len(cigarOps)):
-                    if cigarOps[ii][0] in [0,7,8]:
-                        if cigarOps[ii][1]>endspan:
-                            break
-                        cigarOps[ii][0]=4
-                        tPos+=cigarOps[ii][1]
-                    if cigarOps[ii][0]==1: cigarOps[ii][0]=4
-                    #ignore start deletions (assuming padding 6 is ignored)
-                    if cigarOps[ii][0] in [2,3]:
-                        cigarOps[ii][0]=6
-                        tPos+=cigarOps[ii][1]
+            if endSpan>0: cigarOps,tPos=trimCigar(cigarOps,endSpan,tPos,True)
             for operation,length in cigarOps:
                 if operation in [0,7,8]:
                     seq+=read.query_sequence[qPos:(qPos+length)]
@@ -98,7 +99,7 @@ def main(argv=None):
     parser.add_argument("-q","--minQuality", help="don't count alignments with a mapping quality less than this", type=int,default=0)
     parser.add_argument("-v","--verbose", help="increase output verbosity to stderr", action="store_true")
     parser.add_argument("-r","--region", help="the region to pull reads from",default=None)
-    parser.add_argument("-e","--endspan", help="ignore spans of matches at the start or end of a read less than this cutoff",default=0,type=int)
+    parser.add_argument("-e","--endSpan", help="ignore spans of matches at the start or end of a read less than this cutoff",default=0,type=int)
     args=parser.parse_args(argv)
  
         
@@ -111,7 +112,7 @@ def main(argv=None):
         args.region,ref=getRefFromFasta(helper.readSimpleFasta(fasta),args.region)
 
     nRead=0
-    aligns=[read for read in getAlignsInFile(args.bamFile,args.region,args.minQuality,args.endspan)]
+    aligns=[read for read in getAlignsInFile(args.bamFile,args.region,args.minQuality,args.endSpan)]
     inserts=[[insertion[0],len(insertion[1])] for align in aligns if len(align['insertions'])>0 for insertion in align['insertions'] ]
     maxInserts={}
     for pos,length in inserts:

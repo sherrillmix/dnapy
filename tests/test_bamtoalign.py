@@ -71,6 +71,14 @@ def bamFile(tmpdir_factory):
     return(p)
 
 
+def test_trimCigar():
+    assert bamtoalign.trimCigar([[0,10]],0,3)==[[[0,10]],3]
+    assert bamtoalign.trimCigar([[0,1]],0,5)==[[[0,1]],5]
+    assert bamtoalign.trimCigar([[1,2],[0,10],[1,2]],0,3)==[[[4,2],[0,10],[4,2]],3]
+    assert bamtoalign.trimCigar([[2,2],[0,10],[2,2]],0,3)==[[[6,2],[0,10],[6,2]],5]
+    assert bamtoalign.trimCigar([[0,10],[2,2]],0,3)==[[[0,10],[6,2]],3]
+    assert bamtoalign.trimCigar([[0,2],[2,2],[0,10],[2,2]],2,3)==[[[4,2],[6,2],[0,10],[6,2]],7]
+    assert bamtoalign.trimCigar([[0,2],[2,2],[0,10],[2,2]],1,3)==[[[0,2],[2,2],[0,10],[6,2]],3]
 
 def test_getAlignsInFile(tmpdir,bamFile):
     for xx,yy in zip(bamtoalign.getAlignsInFile(str(bamFile)),[
@@ -80,13 +88,13 @@ def test_getAlignsInFile(tmpdir,bamFile):
     ]):
         print xx
         assert xx==yy
-    for xx,yy in zip(bamtoalign.getAlignsInFile(str(bamFile),endspan=1),[
+    for xx,yy in zip(bamtoalign.getAlignsInFile(str(bamFile),endSpan=1),[
         {'name':'read3','start':28,'seq':'GGGGAAAAAT','strand':'-','insertions':[]},
         {'name': 'read2', 'start': 32, 'insertions': [], 'strand': '+', 'seq': 'AAAATTTT'},
         {'name': 'read1', 'start': 32, 'insertions': [[45,'G']], 'strand': '+', 'seq': 'AAAAACCCCC--GCC'}
     ]):
         assert xx==yy
-    for xx,yy in zip(bamtoalign.getAlignsInFile(str(bamFile),endspan=2),[
+    for xx,yy in zip(bamtoalign.getAlignsInFile(str(bamFile),endSpan=2),[
         {'name':'read3','start':28,'seq':'GGGGAAAAAT','strand':'-','insertions':[]},
         {'name': 'read2', 'start': 32, 'insertions': [], 'strand': '+', 'seq': 'AAAATTTT'},
         {'name': 'read1', 'start': 32, 'insertions': [], 'strand': '+', 'seq': 'AAAAACCCC'}
