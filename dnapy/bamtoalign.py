@@ -16,6 +16,7 @@ def getAlignsInFile(inputFile,region=None,minQuality=0,endspan=0):
             qPos=0
             seq=''
             insertions=[]
+            #make tuples mutable
             cigarOps=[[operation,length] for operation, length in read.cigartuples]
             if endspan>0:
                 for ii in range(len(cigarOps)-1,-1,-1):
