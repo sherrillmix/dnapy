@@ -86,7 +86,6 @@ def test_getAlignsInFile(tmpdir,bamFile):
         {'name': 'read2', 'start': 32, 'insertions': [[32,'A'],[42,'T']], 'strand': '+', 'seq': '--AAAATTTT'},
         {'name': 'read1', 'start': 32, 'insertions': [[32,'CC'],[45,'G']], 'strand': '+', 'seq': 'AAAAACCCCC--GCC'}
     ]):
-        print xx
         assert xx==yy
     for xx,yy in zip(bamtoalign.getAlignsInFile(str(bamFile),endSpan=1),[
         {'name':'read3','start':28,'seq':'GGGGAAAAAT','strand':'-','insertions':[]},
