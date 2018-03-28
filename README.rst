@@ -70,43 +70,34 @@ removereads
                           default(out1.fastq.gz ... outn.fastq.gz where n is the
                           number of fastqFiles)
   
-splitbarcodes
+getstartends
 ~~~~
 
 ::
   
-  usage: splitbarcodes [-h] [-i INDEXFILES [INDEXFILES ...]] [-d DOTS] -b
-                       BARCODEFILE [-o OUTPUTPATH] [-u]
-                       fastqFiles [fastqFiles ...]
+  usage: getstartends [-h] [-v] [-g MAXGAPS] [-r REGION] [-f FILE] [-n] [-c]
+                      bamFile
   
-  A program to take a list of barcodes and one or more fastq reads and one or
-  two index reads and output reads matching the barcodes into a seperate file
-  for each barcode. The script takes read files and index files where the reads
-  and indexs are in the same order and outputs reads which match the appropriate
-  barcodes into separate files.
+  A program to pull start and end positions in a region. The command generates
+  standard output with columns referenceName, start (1-based), end (1-based),
+  strand
   
   positional arguments:
-    fastqFiles            a fastq file(s) (potentially gzipped) containing the
-                          sequence reads
+    bamFile               a bam file containing the alignment
   
   optional arguments:
     -h, --help            show this help message and exit
-    -i INDEXFILES [INDEXFILES ...], --indexFiles INDEXFILES [INDEXFILES ...]
-                          a fastq file(s) (potentially gzipped) containing the
-                          index reads
-    -d DOTS, --dots DOTS  output dot to stderr every X reads. Input a negative
-                          number to suppress output (default:-1)
-    -b BARCODEFILE, --barcodeFile BARCODEFILE
-                          a (potentially gzipped) file containing comma
-                          separated sample names, first barcode and second
-                          barcode (with no header and no commas in the sample
-                          names)
-    -o OUTPUTPATH, --outputPath OUTPUTPATH
-                          a string giving the desired output directory
-    -u, --unassigned      if set then store unassigned reads to
-                          {outputPath}/__UNASSIGNED__R#.fastq.gz with their
-                          corresponding barcodes in
-                          {outputPath}/__UNASSIGNED__I#.fastq.gz
+    -v, --verbose         increase output verbosity to stderr
+    -g MAXGAPS, --maxGaps MAXGAPS
+                          maximum allowed insertions or deletions in a read.
+                          Otherwise discard
+    -r REGION, --region REGION
+                          the region to count in
+    -f FILE, --file FILE  a text file specifying several regions to count where
+                          each line gives a region e.g. chr1:1-100
+    -n, --noHeader        suppress the initial header on csv output
+    -c, --regionColumn    specify target region in first column (default: don't
+                          show column)
   
 countbases
 ~~~~
@@ -132,6 +123,35 @@ countbases
                           alignments
     -q MINQUALITY, --minQuality MINQUALITY
                           don't count bases with a quality less than this
+  
+bamtoalign
+~~~~
+
+::
+  
+  usage: bamtoalign [-h] -s REFSEQ [-q MINQUALITY] [-v] [-r REGION] [-e ENDSPAN]
+                    bamFile
+  
+  A program to convert a bam file into an aligned fasta file. The command
+  generates fasta formatted output (two lines for each sequence: a name line
+  prepended by > and a line containing the aligned sequence) to standard out.
+  
+  positional arguments:
+    bamFile               a bam file containing the alignment
+  
+  optional arguments:
+    -h, --help            show this help message and exit
+    -s REFSEQ, --refseq REFSEQ
+                          fasta file giving the reference sequence of interest
+    -q MINQUALITY, --minQuality MINQUALITY
+                          don't count alignments with a mapping quality less
+                          than this
+    -v, --verbose         increase output verbosity to stderr
+    -r REGION, --region REGION
+                          the region to pull reads from
+    -e ENDSPAN, --endspan ENDSPAN
+                          ignore spans of matches at the start or end of a read
+                          less than this cutoff
   
 removeshort
 ~~~~
@@ -191,34 +211,43 @@ countkmers
                           be less than or equal the number of threads on
                           computer.
   
-getstartends
+splitbarcodes
 ~~~~
 
 ::
   
-  usage: getstartends [-h] [-v] [-g MAXGAPS] [-r REGION] [-f FILE] [-n] [-c]
-                      bamFile
+  usage: splitbarcodes [-h] [-i INDEXFILES [INDEXFILES ...]] [-d DOTS] -b
+                       BARCODEFILE [-o OUTPUTPATH] [-u]
+                       fastqFiles [fastqFiles ...]
   
-  A program to pull start and end positions in a region. The command generates
-  standard output with columns referenceName, start (1-based), end (1-based),
-  strand
+  A program to take a list of barcodes and one or more fastq reads and one or
+  two index reads and output reads matching the barcodes into a seperate file
+  for each barcode. The script takes read files and index files where the reads
+  and indexs are in the same order and outputs reads which match the appropriate
+  barcodes into separate files.
   
   positional arguments:
-    bamFile               a bam file containing the alignment
+    fastqFiles            a fastq file(s) (potentially gzipped) containing the
+                          sequence reads
   
   optional arguments:
     -h, --help            show this help message and exit
-    -v, --verbose         increase output verbosity to stderr
-    -g MAXGAPS, --maxGaps MAXGAPS
-                          maximum allowed insertions or deletions in a read.
-                          Otherwise discard
-    -r REGION, --region REGION
-                          the region to count in
-    -f FILE, --file FILE  a text file specifying several regions to count where
-                          each line gives a region e.g. chr1:1-100
-    -n, --noHeader        suppress the initial header on csv output
-    -c, --regionColumn    specify target region in first column (default: don't
-                          show column)
+    -i INDEXFILES [INDEXFILES ...], --indexFiles INDEXFILES [INDEXFILES ...]
+                          a fastq file(s) (potentially gzipped) containing the
+                          index reads
+    -d DOTS, --dots DOTS  output dot to stderr every X reads. Input a negative
+                          number to suppress output (default:-1)
+    -b BARCODEFILE, --barcodeFile BARCODEFILE
+                          a (potentially gzipped) file containing comma
+                          separated sample names, first barcode and second
+                          barcode (with no header and no commas in the sample
+                          names)
+    -o OUTPUTPATH, --outputPath OUTPUTPATH
+                          a string giving the desired output directory
+    -u, --unassigned      if set then store unassigned reads to
+                          {outputPath}/__UNASSIGNED__R#.fastq.gz with their
+                          corresponding barcodes in
+                          {outputPath}/__UNASSIGNED__I#.fastq.gz
   
 
 Changelog
