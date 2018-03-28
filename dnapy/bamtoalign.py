@@ -61,8 +61,7 @@ def padRead(seq,start,end,readInserts=None,refInserts=None):
     seqSplit=[complete[start:end] for start,end in zip([0]+splitPos,splitPos+[None])]
     return ''.join([val for pair in zip(['']+[xx[1] for xx in sortInserts],seqSplit) for val in pair])
 
-def getRefFromFasta(fasta,region):
-    ref=helper.readSimpleFasta(fasta)
+def getRefFromFasta(ref,region=None):
     if len(ref)==0:
         raise ImportError('Fasta file is empty')
     if len(ref)>1:
@@ -80,7 +79,7 @@ def getRefFromFasta(fasta,region):
         if len(refIds)>1:
             raise ImportError('Reference fasta file contains multiple references matching region '+region)
         ref=ref[refIds[0]][1]
-    return [ref,region]
+    return [region,ref]
 
 
 
@@ -101,7 +100,7 @@ def main(argv=None):
             sys.stderr.write("   "+key+": "+str(value)+'\n')
 
     with helper.openNormalOrGz(args.refseq) as fasta:
-        ref,args.region=getRefFromFasta(fasta,args.region)
+        args.region,ref=getRefFromFasta(helper.readSimpleFasta(fasta),args.region)
 
     nRead=0
     aligns=[read for read in getAlignsInFile(args.bamFile,args.region,args.minQuality,args.endspan)]

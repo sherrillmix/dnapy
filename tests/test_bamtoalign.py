@@ -20,3 +20,20 @@ def test_padRead():
     with pytest.raises(IndexError):
         bamtoalign.padRead("ACACA",0,5,[(2,'ZZ')],{2:1})
 
+def test_getRefFromFasta():
+    with pytest.raises(ImportError):
+        bamtoalign.getRefFromFasta([])
+    seq=bamtoalign.getRefFromFasta([['Test','AAAACCCCTTTTGGGG']])
+    assert seq[0]=='Test'
+    assert seq[1]=='AAAACCCCTTTTGGGG'
+    with pytest.raises(ImportError):
+        bamtoalign.getRefFromFasta([['Test','AAAACCCCTTTTGGGG'],['Test2','ACACA']])
+    seq=bamtoalign.getRefFromFasta([['Test','AAAACCCCTTTTGGGG'],['Test2','ACACA']],'Test')
+    assert seq[0]=='Test'
+    assert seq[1]=='AAAACCCCTTTTGGGG'
+    seq=bamtoalign.getRefFromFasta([['Test','AAAACCCCTTTTGGGG'],['Test2','ACACA']],'Test2')
+    assert seq[0]=='Test2'
+    assert seq[1]=='ACACA'
+
+
+
