@@ -48,7 +48,7 @@ def test_main(capsys,tmpdir):
     p1 = d.join('test.fastq')
     p1.write("@seq1\nAAA\n+\n(((\n@seq2\nTT\n+\n(A\n@seq3\nT\n+\n(\n")
     p2 = d.join('test2.fastq')
-    p2.write("@seq1z\nTTT\n+\n(((\n@seq2z\nTT\n+\n((\n@seq3\nT\n+\n(\n")
+    p2.write("@seq1z\nTTT\n+\n(((\n@seq2z\nTT\n+\n((\n@seq3\nATC\n+\n([(\n")
     b = d.join('test.filter')
     o = d.join('test_1.fastq.gz')
     o2 = d.join('test_2.fastq.gz')
@@ -109,9 +109,13 @@ def test_main(capsys,tmpdir):
     ur2=d.join('__UNASSIGNED__R2.fastq.gz')
     ui1=d.join('__UNASSIGNED__I1.fastq.gz')
     ui2=d.join('__UNASSIGNED__I2.fastq.gz')
+    assert len(helper.openNormalOrGz(str(ur1)).readlines())==4
+    assert len(helper.openNormalOrGz(str(ur2)).readlines())==4
+    assert len(helper.openNormalOrGz(str(ui1)).readlines())==4
+    assert len(helper.openNormalOrGz(str(ui2)).readlines())==4
     for ii,jj in zip([x.rstrip('\n') for x in helper.openNormalOrGz(str(ur1)).readlines()],['@seq3','T','+seq3','(']):
         assert ii==jj
-    for ii,jj in zip([x.rstrip('\n') for x in helper.openNormalOrGz(str(ur2)).readlines()],['@seq3','TAA','+seq3','(!!']):
+    for ii,jj in zip([x.rstrip('\n') for x in helper.openNormalOrGz(str(ur2)).readlines()],['@seq3','ATC','+seq3','([(']):
         assert ii==jj
     for ii,jj in zip([x.rstrip('\n') for x in helper.openNormalOrGz(str(ui1)).readlines()],['@seq3','T','+seq3','(']):
         assert ii==jj

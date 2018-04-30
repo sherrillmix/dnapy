@@ -42,11 +42,11 @@ class barcodeFastqIter:
             bars=tuple([x[1] for x in currentBars])
             if bars in self.barcodes:
                 self.nGood+=1
-                return (currentReads,bars,True)
+                return (currentReads,bars,True,currentBars)
             else:
                 self.nBad+=1
                 if self.returnUnassigned:
-                    return (currentReads,bars,False)
+                    return (currentReads,bars,False,currentBars)
         raise StopIteration()
 
 
@@ -86,12 +86,12 @@ def main(argv=None):
         badIndexHandles=[helper.openNormalOrGz(ii,'w') for ii in badIndexFiles]
         badReadHandles=[helper.openNormalOrGz(ii,'w') for ii in badReadFiles]
 
-    with barcodeFastqIter(args.fastqFiles,args.indexFiles,bars) as fastqIter:
-        for currentReads,bar,assigned in fastqIter:
+    with barcodeFastqIter(args.fastqFiles,args.indexFiles,bars,args.unassigned) as fastqIter:
+        for currentReads,bar,assigned,fullBar in fastqIter:
             if args.unassigned and not assigned:
                 for read,outFile in zip(currentReads,badReadHandles):
                     helper.writeFastqRead(outFile,read)
-                for read,outFile in zip(bar,badIndexHandles):
+                for read,outFile in zip(fullBar,badIndexHandles):
                     helper.writeFastqRead(outFile,read)
             else:
                 for read,outFile in zip(currentReads,outHandles[bar]):

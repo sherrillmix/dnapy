@@ -149,7 +149,7 @@ bamtoalign
     -v, --verbose         increase output verbosity to stderr
     -r REGION, --region REGION
                           the region to pull reads from
-    -e ENDSPAN, --endspan ENDSPAN
+    -e ENDSPAN, --endSpan ENDSPAN
                           ignore spans of matches at the start or end of a read
                           less than this cutoff
   
