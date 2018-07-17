@@ -44,15 +44,15 @@ removereads
 
 ::
   
-  usage: removereads [-h] [-d DOTS] -f FILTERFILE
-                     [-o [OUTPUTFILES [OUTPUTFILES ...]]]
+  usage: removereads [-h] [-d DOTS] [-o [OUTPUTFILES [OUTPUTFILES ...]]] -f
+                     FILTERFILE [-k]
                      fastqFiles [fastqFiles ...]
   
   A program to filter reads by name from a single/set of fastq file(s). The
   script looks for reads which have a name line where the string before a space
   exactly matches a pattern. If multiple files are passed in, then they are
-  processed in sync and if any name matches that read is discarded from all
-  files.
+  processed in sync and if any name matches that read is discarded (or kept)
+  from all files.
   
   positional arguments:
     fastqFiles            a (potentially gzipped) fastq file(s) containing the
@@ -62,13 +62,15 @@ removereads
     -h, --help            show this help message and exit
     -d DOTS, --dots DOTS  output dot to stderr every X reads. Input a negative
                           number to suppress output (default:-1)
-    -f FILTERFILE, --filterFile FILTERFILE
-                          a (potentially gzipped) file containing the names of
-                          reads to be filtered one per line
     -o [OUTPUTFILES [OUTPUTFILES ...]], --outputFiles [OUTPUTFILES [OUTPUTFILES ...]]
                           an output file(s) (one for each input fastq file).
                           default(out1.fastq.gz ... outn.fastq.gz where n is the
                           number of fastqFiles)
+    -f FILTERFILE, --filterFile FILTERFILE
+                          a (potentially gzipped) file containing the names of
+                          reads to be filtered one per line
+    -k, --keep            keep reads matching the filter file and filter all
+                          nonmatching reads
   
 getstartends
 ~~~~
