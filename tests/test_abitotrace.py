@@ -2,6 +2,7 @@
 import pytest
 from dnapy import helper
 from dnapy import abitotrace
+import os
 
 def test_badFiles(tmpdir):
     d = tmpdir.mkdir('dir')
@@ -18,7 +19,8 @@ def test_badFiles(tmpdir):
         abitotrace.main([str(p1)])
 
 def test_realAbi(capsys):
-    abitotrace.main(['tests/310.ab1'])
+    ab1=os.path.join(os.path.dirname(os.path.abspath(__file__)),'310.ab1')
+    abitotrace.main([ab1])
     out, err=capsys.readouterr()
     assert err==''
     outSplit=out.split('\n')
