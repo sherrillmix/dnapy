@@ -22,7 +22,7 @@ class PyTest(TestCommand):
         sys.exit(errno)
 
 setup(name='dnapy',
-    version='0.1.4',
+    version='0.1.5',
     description='Some handy functions for dealing with sequence alignment files.',
     url='http://github.com/sherrillmix/dnapy',
     author='Scott Sherrill-Mix',
@@ -40,7 +40,8 @@ setup(name='dnapy',
         'getstartends = dnapy.getstartends:main',
         'splitbarcodes = dnapy.splitbarcodes:main',
         'countkmers = dnapy.countkmers:main',
-        'bamtoalign = dnapy.bamtoalign:main'
+        'bamtoalign = dnapy.bamtoalign:main',
+        'abitotrace = dnapy.abitotrace:main'
         ] },
     classifiers=[
         "Topic :: Scientific/Engineering :: Bio-Informatics",

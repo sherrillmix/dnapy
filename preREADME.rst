@@ -43,6 +43,10 @@ INSERT_USAGE_HERE
 
 Changelog
 ---------
+0.1.5 (2018-12-21)
+
+* Add abitotrace function
+
 0.1.4 (2018-02-20)
 
 * Adjust to changes in pysam v1.4

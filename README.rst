@@ -126,6 +126,22 @@ countbases
     -q MINQUALITY, --minQuality MINQUALITY
                           don't count bases with a quality less than this
   
+abitotrace
+~~~~
+
+::
+  
+  usage: abitotrace [-h] abiFile
+  
+  A program to take an ABI .ab1 file from Sanger sequencing and output the
+  traces to standard out as four columns.
+  
+  positional arguments:
+    abiFile     an ABI .ab1 file containing the sequence read
+  
+  optional arguments:
+    -h, --help  show this help message and exit
+  
 bamtoalign
 ~~~~
 
@@ -150,7 +166,10 @@ bamtoalign
                           than this
     -v, --verbose         increase output verbosity to stderr
     -r REGION, --region REGION
-                          the region to pull reads from
+                          the region to pull reads from (note that the
+                          underlying pysam does not like single base regions
+                          like ch1:25. These instead be specified as
+                          chr1:25-25.)
     -e ENDSPAN, --endSpan ENDSPAN
                           ignore spans of matches at the start or end of a read
                           less than this cutoff
@@ -254,6 +273,10 @@ splitbarcodes
 
 Changelog
 ---------
+0.1.5 (2018-12-21)
+
+* Add abitotrace function
+
 0.1.4 (2018-02-20)
 
 * Adjust to changes in pysam v1.4
