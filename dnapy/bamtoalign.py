@@ -98,7 +98,7 @@ def main(argv=None):
     parser.add_argument("-s","--refseq", help="fasta file giving the reference sequence of interest",type=helper.checkFile,required=True)
     parser.add_argument("-q","--minQuality", help="don't count alignments with a mapping quality less than this", type=int,default=0)
     parser.add_argument("-v","--verbose", help="increase output verbosity to stderr", action="store_true")
-    parser.add_argument("-r","--region", help="the region to pull reads from",default=None)
+    parser.add_argument("-r","--region", help="the region to pull reads from (note that the underlying pysam does not like single base regions like ch1:25. These instead be specified as chr1:25-25.)",default=None)
     parser.add_argument("-e","--endSpan", help="ignore spans of matches at the start or end of a read less than this cutoff",default=0,type=int)
     args=parser.parse_args(argv)
  

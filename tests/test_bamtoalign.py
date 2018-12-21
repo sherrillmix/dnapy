@@ -100,16 +100,16 @@ def test_getAlignsInFile(tmpdir,bamFile):
     ]):
         assert xx==yy
 
-    for xx,yy in zip(bamtoalign.getAlignsInFile(str(bamFile),'ref:28'),[{'name':'read3','start':28,'seq':'GGGGAAAAAT','strand':'-','insertions':[]}]):
+    for xx,yy in zip(bamtoalign.getAlignsInFile(str(bamFile),'ref:28-28'),[{'name':'read3','start':28,'seq':'GGGGAAAAAT','strand':'-','insertions':[]}]):
         assert xx==yy
     for xx,yy in zip(bamtoalign.getAlignsInFile(str(bamFile),minQuality=20),[
         {'name':'read3','start':28,'seq':'GGGGAAAAAT','strand':'-','insertions':[]},
         {'name': 'read2', 'start': 32, 'insertions': [[32,'A'],[42,'T']], 'strand': '+', 'seq': '--AAAATTTT'}
     ]):
         assert xx==yy
-    assert len([xx for xx in bamtoalign.getAlignsInFile(str(bamFile),'ref:900')])==0
+    assert len([xx for xx in bamtoalign.getAlignsInFile(str(bamFile),'ref:900-900')])==0
     assert len([xx for xx in bamtoalign.getAlignsInFile(str(bamFile),minQuality=21)])==0
-    with pytest.raises(ValueError):
+    with pytest.raises(IndexError):
         [xx for xx in bamtoalign.getAlignsInFile(str(bamFile),'notRealRef:1')]
 
 
