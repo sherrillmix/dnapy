@@ -20,7 +20,8 @@ def readSimpleFastq(fileHandle):
             seq[0]=seq[0][1:]
             yield seq
         except StopIteration:
-            raise
+            #raise #deprecated in pep 479
+            return
 
 def readSimpleFasta(fileHandle):
     sequences=[]
