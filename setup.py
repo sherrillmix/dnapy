@@ -41,7 +41,8 @@ setup(name='dnapy',
         'splitbarcodes = dnapy.splitbarcodes:main',
         'countkmers = dnapy.countkmers:main',
         'bamtoalign = dnapy.bamtoalign:main',
-        'abitotrace = dnapy.abitotrace:main'
+        'abitotrace = dnapy.abitotrace:main',
+        'splitreadsbyname = dnapy.splitreadsbyname:main'
         ] },
     classifiers=[
         "Topic :: Scientific/Engineering :: Bio-Informatics",
