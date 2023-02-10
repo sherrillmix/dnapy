@@ -96,6 +96,19 @@ def test_openGzOrNormal(tmpdir):
     pred=['@1','22','+1','333','@55555','666666','+55555','7777777']
     for x,y in zip(gz,[x+'\n' for x in pred]):
         assert x==y
+    helper.closeFiles([gz])
+
+    os.chdir(d)
+    gzFileShort = 'a'
+    gz=helper.openNormalOrGz(str(gzFileShort),'w')
+    helper.writeFastqRead(gz,['1','22','333'])
+    helper.writeFastqRead(gz,['55555','666666','7777777'])
+    helper.closeFiles([gz])
+    gz=helper.openNormalOrGz(str(gzFileShort))
+    pred=['@1','22','+1','333','@55555','666666','+55555','7777777']
+    for x,y in zip(gz,[x+'\n' for x in pred]):
+        assert x==y
+    helper.closeFiles([gz])
 
 def test_positive():
     with pytest.raises(argparse.ArgumentTypeError):
