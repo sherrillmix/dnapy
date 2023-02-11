@@ -39,93 +39,6 @@ Usage
 -----
 The package provides the scripts:
 
-removereads
-~~~~
-
-::
-  
-  usage: removereads [-h] [-d DOTS] [-o [OUTPUTFILES [OUTPUTFILES ...]]] -f
-                     FILTERFILE [-k]
-                     fastqFiles [fastqFiles ...]
-  
-  A program to filter reads by name from a single/set of fastq file(s). The
-  script looks for reads which have a name line where the string before a space
-  exactly matches a pattern. If multiple files are passed in, then they are
-  processed in sync and if any name matches that read is discarded (or kept)
-  from all files.
-  
-  positional arguments:
-    fastqFiles            a (potentially gzipped) fastq file(s) containing the
-                          reads with the order of reads the same in all files
-  
-  optional arguments:
-    -h, --help            show this help message and exit
-    -d DOTS, --dots DOTS  output dot to stderr every X reads. Input a negative
-                          number to suppress output (default:-1)
-    -o [OUTPUTFILES [OUTPUTFILES ...]], --outputFiles [OUTPUTFILES [OUTPUTFILES ...]]
-                          an output file(s) (one for each input fastq file).
-                          default(out1.fastq.gz ... outn.fastq.gz where n is the
-                          number of fastqFiles)
-    -f FILTERFILE, --filterFile FILTERFILE
-                          a (potentially gzipped) file containing the names of
-                          reads to be filtered one per line
-    -k, --keep            keep reads matching the filter file and filter all
-                          nonmatching reads
-  
-getstartends
-~~~~
-
-::
-  
-  usage: getstartends [-h] [-v] [-g MAXGAPS] [-r REGION] [-f FILE] [-n] [-c]
-                      bamFile
-  
-  A program to pull start and end positions in a region. The command generates
-  standard output with columns referenceName, start (1-based), end (1-based),
-  strand
-  
-  positional arguments:
-    bamFile               a bam file containing the alignment
-  
-  optional arguments:
-    -h, --help            show this help message and exit
-    -v, --verbose         increase output verbosity to stderr
-    -g MAXGAPS, --maxGaps MAXGAPS
-                          maximum allowed insertions or deletions in a read.
-                          Otherwise discard
-    -r REGION, --region REGION
-                          the region to count in
-    -f FILE, --file FILE  a text file specifying several regions to count where
-                          each line gives a region e.g. chr1:1-100
-    -n, --noHeader        suppress the initial header on csv output
-    -c, --regionColumn    specify target region in first column (default: don't
-                          show column)
-  
-countbases
-~~~~
-
-::
-  
-  usage: countbases [-h] [-v] [-r REGION] [-s] [-q MINQUALITY] bamFile
-  
-  A program to count the number of bases at each position in a region. The
-  command generates standard output with columns referenceName, position,
-  numberOfReads, and numbers of A, C, G, T (or A+, A-, C+, C-, G+, G-, T+, T- if
-  --strand).
-  
-  positional arguments:
-    bamFile               a bam file containing the alignment
-  
-  optional arguments:
-    -h, --help            show this help message and exit
-    -v, --verbose         increase output verbosity to stderr
-    -r REGION, --region REGION
-                          the region to count in
-    -s, --strand          break base counts into positive and negative strand
-                          alignments
-    -q MINQUALITY, --minQuality MINQUALITY
-                          don't count bases with a quality less than this
-  
 abitotrace
 ~~~~
 
@@ -174,6 +87,119 @@ bamtoalign
                           ignore spans of matches at the start or end of a read
                           less than this cutoff
   
+countbases
+~~~~
+
+::
+  
+  usage: countbases [-h] [-v] [-r REGION] [-s] [-q MINQUALITY] bamFile
+  
+  A program to count the number of bases at each position in a region. The
+  command generates standard output with columns referenceName, position,
+  numberOfReads, and numbers of A, C, G, T (or A+, A-, C+, C-, G+, G-, T+, T- if
+  --strand).
+  
+  positional arguments:
+    bamFile               a bam file containing the alignment
+  
+  optional arguments:
+    -h, --help            show this help message and exit
+    -v, --verbose         increase output verbosity to stderr
+    -r REGION, --region REGION
+                          the region to count in
+    -s, --strand          break base counts into positive and negative strand
+                          alignments
+    -q MINQUALITY, --minQuality MINQUALITY
+                          don't count bases with a quality less than this
+  
+countkmers
+~~~~
+
+::
+  
+  usage: countkmers [-h] [-k KMERLENGTH] [-t NTHREADS]
+                    fastqFiles [fastqFiles ...]
+  
+  A program to take a fastq file(s) and count the total k-mers across all reads
+  in each file. Note that partial kmers are discarded e.g. the last 3 reads of a
+  23 base read will be ignored. Return a comma separated file with a header row
+  then a row for each file and a file column then a column for each kmer
+  
+  positional arguments:
+    fastqFiles            a fastq file(s) (potentially gzipped) containing the
+                          sequence reads
+  
+  optional arguments:
+    -h, --help            show this help message and exit
+    -k KMERLENGTH, --kmerLength KMERLENGTH
+                          the lengh of kmer to be used. Be careful with values
+                          larger than 20.
+    -t NTHREADS, --nThreads NTHREADS
+                          the number of threadss to use for processing. Should
+                          be less than or equal the number of threads on
+                          computer.
+  
+getstartends
+~~~~
+
+::
+  
+  usage: getstartends [-h] [-v] [-g MAXGAPS] [-r REGION] [-f FILE] [-n] [-c]
+                      bamFile
+  
+  A program to pull start and end positions in a region. The command generates
+  standard output with columns referenceName, start (1-based), end (1-based),
+  strand
+  
+  positional arguments:
+    bamFile               a bam file containing the alignment
+  
+  optional arguments:
+    -h, --help            show this help message and exit
+    -v, --verbose         increase output verbosity to stderr
+    -g MAXGAPS, --maxGaps MAXGAPS
+                          maximum allowed insertions or deletions in a read.
+                          Otherwise discard
+    -r REGION, --region REGION
+                          the region to count in
+    -f FILE, --file FILE  a text file specifying several regions to count where
+                          each line gives a region e.g. chr1:1-100
+    -n, --noHeader        suppress the initial header on csv output
+    -c, --regionColumn    specify target region in first column (default: don't
+                          show column)
+  
+removereads
+~~~~
+
+::
+  
+  usage: removereads [-h] [-d DOTS] [-o [OUTPUTFILES ...]] -f FILTERFILE [-k]
+                     fastqFiles [fastqFiles ...]
+  
+  A program to filter reads by name from a single/set of fastq file(s). The
+  script looks for reads which have a name line where the string before a space
+  exactly matches a pattern. If multiple files are passed in, then they are
+  processed in sync and if any name matches that read is discarded (or kept)
+  from all files.
+  
+  positional arguments:
+    fastqFiles            a (potentially gzipped) fastq file(s) containing the
+                          reads with the order of reads the same in all files
+  
+  optional arguments:
+    -h, --help            show this help message and exit
+    -d DOTS, --dots DOTS  output dot to stderr every X reads. Input a negative
+                          number to suppress output (default:-1)
+    -o [OUTPUTFILES ...], --outputFiles [OUTPUTFILES ...]
+                          an output file(s) (one for each input fastq file).
+                          default(out1.fastq.gz ... outn.fastq.gz where n is the
+                          number of fastqFiles)
+    -f FILTERFILE, --filterFile FILTERFILE
+                          a (potentially gzipped) file containing the names of
+                          reads to be filtered one per line
+    -k, --keep            keep reads matching the filter file and filter all
+                          nonmatching reads
+  
 removeshort
 ~~~~
 
@@ -204,33 +230,6 @@ removeshort
                           reads with different length sequence and qualities.
                           Note this requires assuming that all reads are 4 lines
                           each
-  
-countkmers
-~~~~
-
-::
-  
-  usage: countkmers [-h] [-k KMERLENGTH] [-t NTHREADS]
-                    fastqFiles [fastqFiles ...]
-  
-  A program to take a fastq file(s) and count the total k-mers across all reads
-  in each file. Note that partial kmers are discarded e.g. the last 3 reads of a
-  23 base read will be ignored. Return a comma separated file with a header row
-  then a row for each file and a file column then a column for each kmer
-  
-  positional arguments:
-    fastqFiles            a fastq file(s) (potentially gzipped) containing the
-                          sequence reads
-  
-  optional arguments:
-    -h, --help            show this help message and exit
-    -k KMERLENGTH, --kmerLength KMERLENGTH
-                          the lengh of kmer to be used. Be careful with values
-                          larger than 20.
-    -t NTHREADS, --nThreads NTHREADS
-                          the number of threadss to use for processing. Should
-                          be less than or equal the number of threads on
-                          computer.
   
 splitbarcodes
 ~~~~
@@ -270,12 +269,52 @@ splitbarcodes
                           corresponding barcodes in
                           {outputPath}/__UNASSIGNED__I#.fastq.gz
   
+splitreadsbyname
+~~~~
+
+::
+  
+  usage: splitreadsbyname [-h] -s SPLITFILE [-d DOTS] [-o OUTPUTPATH] [-u] [-a]
+                          fastqFile
+  
+  A program to take a list of read names and desired files and a fastq file
+  containing various reads and output reads to their assigned file locations.
+  The script takes a standard fastq read file and a csv separated file
+  containing read identifiers and file locations and outputs reads which match
+  the appropriate read names into their assigned files.
+  
+  positional arguments:
+    fastqFile             a fastq file (potentially gzipped) containing the
+                          sequence reads
+  
+  optional arguments:
+    -h, --help            show this help message and exit
+    -s SPLITFILE, --splitFile SPLITFILE
+                          a (potentially gzipped) file containing comma
+                          separated reads names and file names (with no header
+                          and no commas in the sample names)
+    -d DOTS, --dots DOTS  output dot to stderr every X reads. Input a negative
+                          number to suppress output (default:-1)
+    -o OUTPUTPATH, --outputPath OUTPUTPATH
+                          a string giving the desired output directory
+    -u, --unassigned      if set then store unassigned reads to
+                          {outputPath}/__UNASSIGNED__.fastq.gz
+    -a, --append          if set then append to already existing output files
+  
 
 Changelog
 ---------
+0.1.7 (2023-02-11)
+
+* Add `splitreadsbyname`
+
+0.1.6 (2021-09-20)
+
+* Fix code rot from python changes
+
 0.1.5 (2018-12-21)
 
-* Add abitotrace function
+* Add `abitotrace` function
 
 0.1.4 (2018-02-20)
 

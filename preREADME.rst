@@ -43,9 +43,17 @@ INSERT_USAGE_HERE
 
 Changelog
 ---------
+0.1.7 (2023-02-11)
+
+* Add `splitreadsbyname`
+
+0.1.6 (2021-09-20)
+
+* Fix code rot from python changes
+
 0.1.5 (2018-12-21)
 
-* Add abitotrace function
+* Add `abitotrace` function
 
 0.1.4 (2018-02-20)
 
