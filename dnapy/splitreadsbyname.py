@@ -82,7 +82,7 @@ def main(argv=None):
     with splitFastqIter(args.fastqFile,zip(reads,files),args.unassigned) as fastqIter:
         for currentRead,splitId,assigned in fastqIter:
             if args.unassigned and not assigned:
-                helper.writeFastqRead(badReadHandle,read)
+                helper.writeFastqRead(badReadHandle,currentRead)
             else:
                 helper.writeFastqRead(outHandles[splitId],currentRead)
                 if args.dots>0:
