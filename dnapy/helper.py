@@ -76,7 +76,8 @@ def closeFiles(openFiles):
 def openNormalOrGz(gzFile,mode='r'):
     if not any([True for ii in mode if ii=='t']):mode+="t"
     try:
-        if (len(gzFile)>1 and gzFile[-2:]=='gz') or (len(gzFile)>3 and gzFile[-4]=='gzip'):
+        gzFileStr=str(gzFile)
+        if (len(gzFileStr)>1 and str(gzFileStr)[-2:]=='gz') or (len(str(gzFileStr))>3 and gzFileStr[-4]=='gzip'):
             fastq=gzip.open(gzFile, mode)
         else:
             fastq=open(gzFile,mode)
