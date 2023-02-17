@@ -23,7 +23,7 @@ class PyTest(TestCommand):
 
 setup(name='dnapy',
     version='0.1.7',
-    description='Some handy functions for dealing with sequence alignment files.',
+    description='Some handy functions for dealing with DNA sequences and sequence alignment files.',
     url='http://github.com/sherrillmix/dnapy',
     author='Scott Sherrill-Mix',
     author_email='shescott@upenn.edu',
