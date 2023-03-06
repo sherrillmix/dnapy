@@ -43,6 +43,10 @@ INSERT_USAGE_HERE
 
 Changelog
 ---------
+0.1.8 (2023-03-06)
+
+* Add `countbarcodes`
+
 0.1.7 (2023-02-11)
 
 * Add `splitreadsbyname`

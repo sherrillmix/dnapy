@@ -87,6 +87,36 @@ bamtoalign
                           ignore spans of matches at the start or end of a read
                           less than this cutoff
   
+countbarcodes
+~~~~
+
+::
+  
+  usage: countbarcodes [-h] [-s START] [-e END] [-w WHITELIST] [-d DOTS] [-a]
+                       fastqFiles [fastqFiles ...]
+  
+  A program to take a fastq file and count barcodes (potentially only including
+  those found in a whitelist). The script takes a standard fastq read file and
+  an optional barcode whitelist file containing one barcode per line and outputs
+  a header-less csv with columns barcode, count for each barcode to standard out
+  
+  positional arguments:
+    fastqFiles            a fastq file(s) (potentially gzipped) containing the
+                          sequence reads
+  
+  optional arguments:
+    -h, --help            show this help message and exit
+    -s START, --start START
+                          Start position of barcode in reads (1-based)
+    -e END, --end END     End position of barcode in reads (1-based)
+    -w WHITELIST, --whitelist WHITELIST
+                          a (potentially gzipped) file containing whitelisted
+                          barcodes one to a line with no header
+    -d DOTS, --dots DOTS  output dot to stderr every X reads. Input a negative
+                          number to suppress output (default:-1)
+    -a, --all             if set output 0 for all barcodes in whitelist not
+                          appearing
+  
 countbases
 ~~~~
 
@@ -304,6 +334,10 @@ splitreadsbyname
 
 Changelog
 ---------
+0.1.8 (2023-03-06)
+
+* Add `countbarcodes`
+
 0.1.7 (2023-02-11)
 
 * Add `splitreadsbyname`
