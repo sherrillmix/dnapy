@@ -334,6 +334,10 @@ splitreadsbyname
 
 Changelog
 ---------
+0.1.9 (2022-03-20)
+
+* Add helper class `Trie`
+
 0.1.8 (2023-03-06)
 
 * Add `countbarcodes`
