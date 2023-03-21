@@ -40,18 +40,18 @@ class Trie:
             if node.end:
                 return [('',0)]
             else:
-                return [False]
+                return []
         if maxErrors<1:
             if self.checkSeq(seq,node):
                 return [(seq,0)]
             else:
-                return [False]
+                return []
         else:
             #for each possible child node check downstream and if possible return tuple of (childChar + possibleString, numberErrorsInPossibleString) if childChar matches seq[0] else (childChar + possibleString, numberErrorsInPossibleString+1)
             out=[(child+ii[0],ii[1] if child == seq[0] else ii[1]+1) for child in node.children for ii in self.checkError(seq[1:],node.children[child],maxErrors if child == seq[0] else  maxErrors-1) if ii]
             if len(out)>0:
                 return out
             else:
-                return [False]
+                return []
 
 

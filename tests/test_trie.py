@@ -18,9 +18,9 @@ def test_trie():
     assert not t.checkSeq('AB1C')
     assert not t.checkSeq('AB')
     assert not t.checkSeq('')
-    assert t.checkError('')==[False]
-    assert t.checkError('ACC1')==[False]
-    assert t.checkError('ABD',maxErrors=0)==[False]
+    assert t.checkError('')==[]
+    assert t.checkError('ACC1')==[]
+    assert t.checkError('ABD',maxErrors=0)==[]
     assert sorted(t.checkError('ABD',maxErrors=1))==sorted([('AB1',1)])
     assert sorted(t.checkError('ABD',maxErrors=2))==sorted([('AB1',1),('ACC',2)])
     assert sorted(t.checkError('AB1',maxErrors=2))==sorted([('AB1',0),('ACC',2)])
