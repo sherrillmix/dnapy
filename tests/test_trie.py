@@ -13,11 +13,16 @@ def test_trie():
     assert seqs==inputSeqs
     assert t.checkSeq('AB1')
     assert t.checkSeq('ACC')
+    assert 'AB1' in t
+    assert 'ACC' in t
     assert not t.checkSeq('ABD')
     assert not t.checkSeq('AB11')
     assert not t.checkSeq('AB1C')
     assert not t.checkSeq('AB')
     assert not t.checkSeq('')
+    assert '' not in t
+    assert 'ABD' not in t
+    assert 'AC1' not in t
     assert t.checkError('')==[]
     assert t.checkError('ACC1')==[]
     assert t.checkError('ABD',maxErrors=0)==[]

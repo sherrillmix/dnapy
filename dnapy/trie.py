@@ -34,6 +34,9 @@ class Trie:
                 return False
         return node.end
 
+    def __contains__(self, key):
+        return self.checkSeq(key)
+
     def checkError(self,seq,node=None,maxErrors=1):
         if node is None: node=self.root
         if seq=='':
