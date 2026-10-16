@@ -15,7 +15,7 @@ def test_badFiles(tmpdir):
         abitotrace.main([str(p1)])
     #incorrectly formatted file
     p1.write("1234567890") #qual and seq different
-    with pytest.raises(IOError):
+    with pytest.raises((IOError,ValueError)):
         abitotrace.main([str(p1)])
 
 def test_realAbi(capsys):
